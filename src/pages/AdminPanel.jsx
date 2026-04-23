@@ -41,8 +41,6 @@ function AdminPanel() {
   const [selectedProductForBidding, setSelectedProductForBidding] = useState(null);
 
   // Filter visibility states for each tab
-  const [showVerificationFilters, setShowVerificationFilters] = useState(false);
-  const [showCashRequestFilters, setShowCashRequestFilters] = useState(false);
   const [showCashDonationFilters, setShowCashDonationFilters] = useState(false);
   const [showProductDonationFilters, setShowProductDonationFilters] = useState(false);
   const [showProductRequestFilters, setShowProductRequestFilters] = useState(false);
@@ -1476,54 +1474,43 @@ function AdminPanel() {
                       </button>
                     )}
                   </div>
-                  <button
-                    className="admin-filter-button"
-                    onClick={() => setShowVerificationFilters(!showVerificationFilters)}
-                  >
-                    <i className="ri-filter-3-line"></i>
-                    Filter
-                  </button>
-                  {showVerificationFilters && (
-                    <>
-                      <div className="admin-filter-group">
-                        <label>Status</label>
-                        <CustomDropdown
-                          options={[
-                            { value: "all", label: "All Status" },
-                            { value: "pending", label: "Pending" },
-                            { value: "approved", label: "Approved" },
-                            { value: "rejected", label: "Rejected" }
-                          ]}
-                          value={verificationStatusFilter}
-                          onChange={setVerificationStatusFilter}
-                        />
-                      </div>
-                      <div className="admin-filter-group">
-                        <label>Sort By</label>
-                        <CustomDropdown
-                          options={[
-                            { value: "newest", label: "Newest First" },
-                            { value: "oldest", label: "Oldest First" },
-                            { value: "name-asc", label: "Name (A-Z)" },
-                            { value: "name-desc", label: "Name (Z-A)" }
-                          ]}
-                          value={verificationSortBy}
-                          onChange={setVerificationSortBy}
-                        />
-                      </div>
-                      {(verificationSearch || verificationStatusFilter !== "all" || verificationSortBy !== "newest") && (
-                        <button
-                          className="admin-clear-filters"
-                          onClick={() => {
-                            setVerificationSearch("");
-                            setVerificationStatusFilter("all");
-                            setVerificationSortBy("newest");
-                          }}
-                        >
-                          Clear
-                        </button>
-                      )}
-                    </>
+                  <div className="admin-filter-group">
+                    <label>Status</label>
+                    <CustomDropdown
+                      options={[
+                        { value: "all", label: "All Status" },
+                        { value: "pending", label: "Pending" },
+                        { value: "approved", label: "Approved" },
+                        { value: "rejected", label: "Rejected" }
+                      ]}
+                      value={verificationStatusFilter}
+                      onChange={setVerificationStatusFilter}
+                    />
+                  </div>
+                  <div className="admin-filter-group">
+                    <label>Sort By</label>
+                    <CustomDropdown
+                      options={[
+                        { value: "newest", label: "Newest First" },
+                        { value: "oldest", label: "Oldest First" },
+                        { value: "name-asc", label: "Name (A-Z)" },
+                        { value: "name-desc", label: "Name (Z-A)" }
+                      ]}
+                      value={verificationSortBy}
+                      onChange={setVerificationSortBy}
+                    />
+                  </div>
+                  {(verificationSearch || verificationStatusFilter !== "all" || verificationSortBy !== "newest") && (
+                    <button
+                      className="admin-clear-filters"
+                      onClick={() => {
+                        setVerificationSearch("");
+                        setVerificationStatusFilter("all");
+                        setVerificationSortBy("newest");
+                      }}
+                    >
+                      Clear
+                    </button>
                   )}
                 </div>
                 {(() => {
@@ -1629,54 +1616,43 @@ function AdminPanel() {
                       </button>
                     )}
                   </div>
-                  <button
-                    className="admin-filter-button"
-                    onClick={() => setShowCashRequestFilters(!showCashRequestFilters)}
-                  >
-                    <i className="ri-filter-3-line"></i>
-                    Filter
-                  </button>
-                  {showCashRequestFilters && (
-                    <>
-                      <div className="admin-filter-group">
-                        <label>Status</label>
-                        <CustomDropdown
-                          options={[
-                            { value: "all", label: "All Status" },
-                            { value: "pending", label: "Pending" },
-                            { value: "approved", label: "Approved" },
-                            { value: "rejected", label: "Rejected" }
-                          ]}
-                          value={cashRequestStatusFilter}
-                          onChange={setCashRequestStatusFilter}
-                        />
-                      </div>
-                      <div className="admin-filter-group">
-                        <label>Sort By</label>
-                        <CustomDropdown
-                          options={[
-                            { value: "newest", label: "Newest First" },
-                            { value: "oldest", label: "Oldest First" },
-                            { value: "name-asc", label: "Name (A-Z)" },
-                            { value: "name-desc", label: "Name (Z-A)" }
-                          ]}
-                          value={cashRequestSortBy}
-                          onChange={setCashRequestSortBy}
-                        />
-                      </div>
-                      {(cashRequestSearch || cashRequestStatusFilter !== "all" || cashRequestSortBy !== "newest") && (
-                        <button
-                          className="admin-clear-filters"
-                          onClick={() => {
-                            setCashRequestSearch("");
-                            setCashRequestStatusFilter("all");
-                            setCashRequestSortBy("newest");
-                          }}
-                        >
-                          Clear
-                        </button>
-                      )}
-                    </>
+                  <div className="admin-filter-group">
+                    <label>Status</label>
+                    <CustomDropdown
+                      options={[
+                        { value: "all", label: "All Status" },
+                        { value: "pending", label: "Pending" },
+                        { value: "approved", label: "Approved" },
+                        { value: "rejected", label: "Rejected" }
+                      ]}
+                      value={cashRequestStatusFilter}
+                      onChange={setCashRequestStatusFilter}
+                    />
+                  </div>
+                  <div className="admin-filter-group">
+                    <label>Sort By</label>
+                    <CustomDropdown
+                      options={[
+                        { value: "newest", label: "Newest First" },
+                        { value: "oldest", label: "Oldest First" },
+                        { value: "name-asc", label: "Name (A-Z)" },
+                        { value: "name-desc", label: "Name (Z-A)" }
+                      ]}
+                      value={cashRequestSortBy}
+                      onChange={setCashRequestSortBy}
+                    />
+                  </div>
+                  {(cashRequestSearch || cashRequestStatusFilter !== "all" || cashRequestSortBy !== "newest") && (
+                    <button
+                      className="admin-clear-filters"
+                      onClick={() => {
+                        setCashRequestSearch("");
+                        setCashRequestStatusFilter("all");
+                        setCashRequestSortBy("newest");
+                      }}
+                    >
+                      Clear
+                    </button>
                   )}
                 </div>
                 {(() => {
@@ -1787,9 +1763,9 @@ function AdminPanel() {
                     <CustomDropdown
                       options={[
                         { value: "all", label: "All Status" },
-                        { value: "pending", label: "⏳ Pending" },
-                        { value: "approved", label: "✅ Approved" },
-                        { value: "rejected", label: "❌ Rejected" }
+                        { value: "pending", label: "Pending" },
+                        { value: "approved", label: "Approved" },
+                        { value: "rejected", label: "Rejected" }
                       ]}
                       value={productRequestStatusFilter}
                       onChange={setProductRequestStatusFilter}
@@ -1921,9 +1897,9 @@ function AdminPanel() {
                     <CustomDropdown
                       options={[
                         { value: "all", label: "All Status" },
-                        { value: "pending", label: "⏳ Pending" },
-                        { value: "approved", label: "✅ Approved" },
-                        { value: "rejected", label: "❌ Rejected" }
+                        { value: "pending", label: "Pending" },
+                        { value: "approved", label: "Approved" },
+                        { value: "rejected", label: "Rejected" }
                       ]}
                       value={cashDonationStatusFilter}
                       onChange={setCashDonationStatusFilter}
@@ -2134,12 +2110,12 @@ function AdminPanel() {
                     <label style={{ marginBottom: '0.5rem', display: 'block', fontWeight: '600', color: '#4a5568' }}>Status</label>
                     <CustomDropdown
                       options={[
-                        { value: "all", label: "📋 All Status" },
-                        { value: "action-required", label: "⚠️ Action Required" },
-                        { value: "active", label: "🟢 Active" },
-                        { value: "upcoming", label: "⏰ Upcoming" },
-                        { value: "ended", label: "🔴 Ended" },
-                        { value: "completed", label: "✅ Completed" }
+                        { value: "all", label: "All Status" },
+                        { value: "action-required", label: "Action Required" },
+                        { value: "active", label: "Active" },
+                        { value: "upcoming", label: "Upcoming" },
+                        { value: "ended", label: "Ended" },
+                        { value: "completed", label: "Completed" }
                       ]}
                       value={biddingStatusFilter}
                       onChange={setBiddingStatusFilter}
@@ -2149,11 +2125,11 @@ function AdminPanel() {
                     <label style={{ marginBottom: '0.5rem', display: 'block', fontWeight: '600', color: '#4a5568' }}>Sort By</label>
                     <CustomDropdown
                       options={[
-                        { value: "newest", label: "🕐 Newest First" },
-                        { value: "oldest", label: "🕐 Oldest First" },
-                        { value: "name-asc", label: "🔤 Name (A-Z)" },
-                        { value: "name-desc", label: "🔤 Name (Z-A)" },
-                        { value: "highest-bid", label: "💰 Highest Bid" }
+                        { value: "newest", label: "Newest First" },
+                        { value: "oldest", label: "Oldest First" },
+                        { value: "name-asc", label: "Name (A-Z)" },
+                        { value: "name-desc", label: "Name (Z-A)" },
+                        { value: "highest-bid", label: "Highest Bid" }
                       ]}
                       value={biddingSortBy}
                       onChange={setBiddingSortBy}
