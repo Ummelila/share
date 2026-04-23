@@ -83,7 +83,7 @@ function CashDonationForm() {
         .eq("status", "pending");
 
       if (pending && pending.length > 0) {
-        setFeedback({ type: "warning", message: "You already have a pending donation. Please wait for admin approval before creating a new one." });
+        setFeedback({ type: "warning", message: "Cash Donation already in pending" });
         setLoading(false);
         return;
       }

@@ -8,8 +8,10 @@ function ProductRequestForm() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [step, setStep] = useState(1);
   const [productData, setProductData] = useState(null);
   const [productRequestReason, setProductRequestReason] = useState("");
+  const [address, setAddress] = useState("");
   const [productImageUrl, setProductImageUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
@@ -90,6 +92,16 @@ function ProductRequestForm() {
     }
   };
 
+  const handleNextStep = (e) => {
+    e.preventDefault();
+    if (!productRequestReason.trim()) {
+      setFeedback({ type: "error", message: "Please provide a reason for requesting this product." });
+      return;
+    }
+    setFeedback(null);
+    setStep(2);
+  };
+
   const handleProductRequestSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
@@ -97,6 +109,11 @@ function ProductRequestForm() {
 
     if (!productRequestReason.trim()) {
       setFeedback({ type: "error", message: "Please provide a reason for requesting this product." });
+      return;
+    }
+
+    if (!address.trim()) {
+      setFeedback({ type: "error", message: "Please provide your delivery address." });
       return;
     }
 
@@ -123,7 +140,7 @@ function ProductRequestForm() {
         .eq("status", "pending");
 
       if (pending && pending.length > 0) {
-        setFeedback({ type: "warning", message: "You already have a pending product request. Please wait for admin approval before requesting another." });
+        setFeedback({ type: "warning", message: "Your product request is already in pending" });
         setLoading(false);
         return;
       }
@@ -141,7 +158,8 @@ function ProductRequestForm() {
         return;
       }
 
-      const { error } = await supabase.from("product_requests").insert([
+      // Insert product request with fallback for missing address column
+      let { error } = await supabase.from("product_requests").insert([
         {
           user_id: userData.id,
           user_name: userData.name,
@@ -150,8 +168,28 @@ function ProductRequestForm() {
           product_name: productData.product_name,
           product_category: productData.category,
           reason: productRequestReason.trim(),
+          address: address.trim(),
         },
       ]);
+
+      // Fallback: If address column doesn't exist in Supabase yet, append to reason
+      if (error && (error.message.includes("address") || error.code === "PGRST116" || error.code === "42703")) {
+        console.warn("Retrying with fallback: Address column missing in database.");
+        const fallbackReason = `${productRequestReason.trim()}\n\n[DELIVERY ADDRESS]\n${address.trim()}`;
+        
+        const retry = await supabase.from("product_requests").insert([
+          {
+            user_id: userData.id,
+            user_name: userData.name,
+            user_email: userData.email,
+            product_donation_id: productData.id,
+            product_name: productData.product_name,
+            product_category: productData.category,
+            reason: fallbackReason,
+          },
+        ]);
+        error = retry.error;
+      }
 
       if (error) throw error;
 
@@ -302,35 +340,74 @@ function ProductRequestForm() {
               </div>
             )}
 
-             <form onSubmit={handleProductRequestSubmit} className="space-y-6">
-               <div>
-                 <label className="label">
-                   Reason for Request <span className="text-red-500">*</span>
-                 </label>
-                 <textarea
-                   name="productRequestReason"
-                   placeholder="Please explain why you need this product..."
-                   value={productRequestReason}
-                   onChange={(e) => setProductRequestReason(e.target.value)}
-                   rows="8"
-                   required
-                   className="input-field w-full resize-none"
-                 />
-               </div>
+              <form onSubmit={step === 1 ? handleNextStep : handleProductRequestSubmit} className="space-y-6">
+                {step === 1 ? (
+                  <div className="space-y-6 animate-slide-in">
+                    <div>
+                      <label className="label">
+                        Reason for Request <span className="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        name="productRequestReason"
+                        placeholder="Please explain why you need this product..."
+                        value={productRequestReason}
+                        onChange={(e) => setProductRequestReason(e.target.value)}
+                        rows="8"
+                        required
+                        className="input-field w-full resize-none"
+                      />
+                    </div>
 
-              <button
-                type="submit"
-                className={`btn-primary w-full flex items-center justify-center gap-2 ${loading ? 'btn-loading' : ''}`}
-                disabled={loading}
-              >
-                {loading ? 'Submitting...' : (
-                  <>
-                    <CheckCircle className="w-5 h-5" />
-                    <span>Submit Request</span>
-                  </>
+                    <button
+                      type="submit"
+                      className="btn-primary w-full flex items-center justify-center gap-2"
+                    >
+                      <span>Next Step</span>
+                      <ArrowLeft className="w-5 h-5 rotate-180" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-6 animate-slide-in">
+                    <div>
+                      <label className="label">
+                        Delivery Address <span className="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        name="address"
+                        placeholder="Enter your full address for delivery..."
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        rows="8"
+                        required
+                        className="input-field w-full resize-none"
+                      />
+                    </div>
+
+                    <div className="flex gap-4">
+                      <button
+                        type="button"
+                        onClick={() => setStep(1)}
+                        className="btn-secondary flex-1 flex items-center justify-center gap-2"
+                      >
+                        <ArrowLeft className="w-5 h-5" />
+                        <span>Back</span>
+                      </button>
+                      <button
+                        type="submit"
+                        className={`btn-primary flex-[2] flex items-center justify-center gap-2 ${loading ? 'btn-loading' : ''}`}
+                        disabled={loading}
+                      >
+                        {loading ? 'Submitting...' : (
+                          <>
+                            <CheckCircle className="w-5 h-5" />
+                            <span>Submit Request</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 )}
-              </button>
-            </form>
+              </form>
 
             <button
               type="button"

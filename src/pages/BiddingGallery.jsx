@@ -201,7 +201,7 @@ const BiddingGallery = () => {
                             productBeforeUpdate.highest_bidder_id,
                             'bid_won',
                             `🎉 Congratulations! You Won the Bid`,
-                            `Congratulations! You won the bid for "${productBeforeUpdate.product_name}" with a bid of ${formatCurrency(parseFloat(productBeforeUpdate.current_highest_bid))}.\n\n📋 Next Steps:\n1. Please complete payment verification\n2. Admin will arrange delivery after payment verification\n3. You will receive updates via notifications\n\nThank you for participating!`,
+                            `Congratulations! You won the bid for "${productBeforeUpdate.product_name}" with a bid of ${formatCurrency(parseFloat(productBeforeUpdate.current_highest_bid))}.\n\n📋 Next Steps:\n1. Please transfer your payments at Meezan Bank\nAccount Number: 01234567890123\nAccount Title: Share For Good\n2. Admin will arrange delivery after payment verification\n3. You will receive updates via notifications\n\nThank you for participating!`,
                             update.id
                         );
                         

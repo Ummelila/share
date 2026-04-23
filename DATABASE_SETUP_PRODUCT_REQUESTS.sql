@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS product_requests (
   product_name VARCHAR(255),
   product_category VARCHAR(100) NOT NULL,
   reason TEXT NOT NULL,
+  address TEXT,
   status VARCHAR(50) DEFAULT 'pending' NOT NULL, -- pending, approved, rejected
   rejection_reason TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

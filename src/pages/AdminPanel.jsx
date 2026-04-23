@@ -1091,8 +1091,8 @@ function AdminPanel() {
             bidding.highest_bidder_name,
             "bid_won",
             "Congratulations! You Won the Bid",
-            `Congratulations! You won the bid for "${bidding.product_name}" with a bid of PKR ${parseFloat(bidding.current_highest_bid).toLocaleString()}. Please complete payment to receive your product.`,
-            `Product: ${bidding.product_name}\nWinning Bid: PKR ${parseFloat(bidding.current_highest_bid).toLocaleString()}\nPlease contact admin for payment details.`,
+            `Congratulations! You won the bid for "${bidding.product_name}" with a bid of PKR ${parseFloat(bidding.current_highest_bid).toLocaleString()}.\n\nPlease transfer your payments at Meezan Bank\nAccount Number: 01234567890123\nAccount Title: Share For Good`,
+            `Product: ${bidding.product_name}\nWinning Bid: PKR ${parseFloat(bidding.current_highest_bid).toLocaleString()}\nPlease transfer your payments at Meezan Bank\nAccount Number: 01234567890123\nAccount Title: Share For Good`,
             bidding.id
           );
 
@@ -1284,68 +1284,7 @@ function AdminPanel() {
           <p>Manage verification requests</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}>
-          {/* Admin Bell */}
-          <div style={{ position: "relative", zIndex: 9999 }} data-notification-dropdown>
-            <button
-              onClick={() => setShowAdminNotifications(!showAdminNotifications)}
-              className="relative p-2 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-primary-600 transition-colors duration-200 cursor-pointer border-none bg-transparent"
-              title="Bank Details Submissions"
-            >
-              <Bell className="w-5 h-5" />
-              {adminNotifications.length > 0 && adminNotifications.filter(n => !n.is_read).length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {adminNotifications.filter(n => !n.is_read).length > 99 ? '99+' : adminNotifications.filter(n => !n.is_read).length}
-                </span>
-              )}
-            </button>
-            
-            {/* Notification Dropdown */}
-            {showAdminNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-card border border-gray-200 z-[100] animate-slide-up overflow-hidden">
-                <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
-                  <h3 className="text-sm font-bold text-gray-900">Notifications</h3>
-                </div>
-                
-                <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
-                  {adminNotifications.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                      <Bell className="w-8 h-8 mx-auto text-gray-300 mb-2" />
-                      <p className="text-sm font-medium">No notifications yet</p>
-                    </div>
-                  ) : (
-                    <div className="divide-y divide-gray-50">
-                      {adminNotifications.map((notification) => (
-                        <div
-                          key={notification.id}
-                          className={`p-4 transition-all duration-200 cursor-pointer ${
-                            notification.is_read ? 'bg-white' : 'bg-primary-50/30'
-                          } hover:bg-gray-50`}
-                          onClick={() => markAdminNotificationAsRead(notification.id)}
-                        >
-                          <div className="flex gap-3">
-                            <div className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${
-                              notification.is_read ? 'bg-gray-200' : 'bg-red-500 animate-pulse'
-                            }`} />
-                            <div className="flex-1 min-w-0">
-                              <p className={`text-sm text-gray-900 mb-0.5 ${!notification.is_read ? 'font-semibold' : ''}`}>
-                                {notification.user_name || 'User'} submitted bank details
-                              </p>
-                              <p className="text-xs text-gray-500 truncate mb-1">
-                                {notification.user_email}
-                              </p>
-                              <p className="text-[10px] text-gray-400 font-medium">
-                                {new Date(notification.created_at).toLocaleString()}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Admin Logout */}
           <button
             className="btn-admin-logout"
             onClick={() => {
@@ -1358,7 +1297,7 @@ function AdminPanel() {
         </div>
       </div>
 
-      {feedback && (
+      {feedback && feedback.type !== "success" && (
         <div
           className={`page-alert ${feedback.type === "success"
               ? "page-alert-success"
@@ -1697,8 +1636,82 @@ function AdminPanel() {
                             <strong>Category:</strong> {request.category}
                           </p>
                           <p>
-                            <strong>Description:</strong> {request.description}
+                            <strong>Description:</strong> {(() => {
+                              if (!request.description) return 'N/A';
+                              let cleanDesc = request.description;
+                              if (cleanDesc.includes("[BANK DETAILS]")) {
+                                cleanDesc = cleanDesc.split("[BANK DETAILS]")[0];
+                              }
+                              if (cleanDesc.includes("[PAYMENT DETAILS]")) {
+                                cleanDesc = cleanDesc.split("[PAYMENT DETAILS]")[0];
+                              }
+                              return cleanDesc.trim();
+                            })()}
                           </p>
+                          <p>
+                            <strong>Payment Method:</strong> {(() => {
+                              if (request.payment_method) return request.payment_method === 'bank' ? 'Bank Transfer' : 'EasyPaisa';
+                              if (request.description && request.description.includes("Method:")) {
+                                const match = request.description.match(/Method:\s*(.*)/);
+                                return match ? match[1].split("\n")[0] : 'N/A';
+                              }
+                              return 'N/A';
+                            })()}
+                          </p>
+
+                          {(() => {
+                            const method = request.payment_method || (request.description && request.description.includes("Method: EasyPaisa") ? 'easypaisa' : 'bank');
+                            
+                            if (method === 'easypaisa' || (request.description && request.description.includes("Method: EasyPaisa"))) {
+                              return (
+                                <p>
+                                  <strong>Phone Number:</strong> {(() => {
+                                    if (request.phone_number) return request.phone_number;
+                                    if (request.description && request.description.includes("Phone Number:")) {
+                                      const match = request.description.match(/Phone Number:\s*(.*)/);
+                                      return match ? match[1].split("\n")[0] : 'N/A';
+                                    }
+                                    return 'N/A';
+                                  })()}
+                                </p>
+                              );
+                            } else {
+                              return (
+                                <>
+                                  <p>
+                                    <strong>Bank Name:</strong> {(() => {
+                                      if (request.bank_name) return request.bank_name;
+                                      if (request.description && request.description.includes("Bank:")) {
+                                        const match = request.description.match(/Bank:\s*(.*)/);
+                                        return match ? match[1].split("\n")[0] : 'N/A';
+                                      }
+                                      return 'N/A';
+                                    })()}
+                                  </p>
+                                  <p>
+                                    <strong>Account Title:</strong> {(() => {
+                                      if (request.account_name) return request.account_name;
+                                      if (request.description && request.description.includes("Account Name:")) {
+                                        const match = request.description.match(/Account Name:\s*(.*)/);
+                                        return match ? match[1].split("\n")[0] : 'N/A';
+                                      }
+                                      return 'N/A';
+                                    })()}
+                                  </p>
+                                  <p>
+                                    <strong>Account Number:</strong> {(() => {
+                                      if (request.account_number) return request.account_number;
+                                      if (request.description && request.description.includes("Account Number:")) {
+                                        const match = request.description.match(/Account Number:\s*(.*)/);
+                                        return match ? match[1].split("\n")[0] : 'N/A';
+                                      }
+                                      return 'N/A';
+                                    })()}
+                                  </p>
+                                </>
+                              );
+                            }
+                          })()}
                           <p>
                             <strong>Date:</strong>{" "}
                             {new Date(request.created_at).toLocaleDateString()}
@@ -1842,7 +1855,22 @@ function AdminPanel() {
                             <strong>Category:</strong> {request.product_category}
                           </p>
                           <p>
-                            <strong>Reason:</strong> {request.reason}
+                            <strong>Reason:</strong> {(() => {
+                              if (request.reason && request.reason.includes("[DELIVERY ADDRESS]")) {
+                                return request.reason.split("[DELIVERY ADDRESS]")[0].trim();
+                              }
+                              return request.reason;
+                            })()}
+                          </p>
+                          <p>
+                            <strong>Address:</strong> {(() => {
+                              if (request.address) return request.address;
+                              if (request.reason && request.reason.includes("[DELIVERY ADDRESS]")) {
+                                const parts = request.reason.split("[DELIVERY ADDRESS]");
+                                return parts.length > 1 ? parts[1].trim() : 'N/A';
+                              }
+                              return 'N/A';
+                            })()}
                           </p>
                           <p>
                             <strong>Date:</strong>{" "}
@@ -2033,12 +2061,6 @@ function AdminPanel() {
                           <strong>Description:</strong> {donation.description}
                         </p>
                         <p>
-                          <strong>AI Check:</strong>{" "}
-                          <span className={`status-badge ${donation.ai_result === "safe" ? "approved" : donation.ai_result === "unsafe" ? "rejected" : "pending"}`}>
-                            {donation.ai_result || "pending"}
-                          </span>
-                        </p>
-                        <p>
                           <strong>Date:</strong>{" "}
                           {new Date(donation.created_at).toLocaleDateString()}
                         </p>
@@ -2058,9 +2080,9 @@ function AdminPanel() {
                           <button
                             className={`btn-approve ${submittingId === `prod-don-${donation.id}` ? 'btn-loading' : ''}`}
                             onClick={() => handleApproveProductDonation(donation.id)}
-                            disabled={donation.ai_result === "unsafe" || submittingId === `prod-don-${donation.id}`}
+                            disabled={submittingId === `prod-don-${donation.id}`}
                           >
-                            {submittingId === `prod-don-${donation.id}` ? 'Approving...' : (donation.ai_result === "unsafe" ? "⚠️ Cannot Approve (AI Flagged)" : "Approve")}
+                            {submittingId === `prod-don-${donation.id}` ? 'Approving...' : "Approve"}
                           </button>
                           <button
                             className="btn-reject"

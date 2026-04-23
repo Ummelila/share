@@ -76,6 +76,12 @@ function ProductDonationForm() {
     setFeedback(null);
 
     // Validate product form
+    if (!formData.productName.trim()) {
+      setFeedback({ type: "error", message: "Please enter the product name." });
+      setLoading(false);
+      return;
+    }
+
     if (!productImage) {
       setFeedback({ type: "error", message: "Please upload a product image." });
       setLoading(false);
@@ -123,7 +129,7 @@ function ProductDonationForm() {
         .eq("status", "pending");
 
       if (pending && pending.length > 0) {
-        setFeedback({ type: "warning", message: "You already have a pending product donation. Please wait for admin approval before creating a new one." });
+        setFeedback({ type: "warning", message: "Product donation already in pending" });
         setLoading(false);
         return;
       }
@@ -264,7 +270,9 @@ function ProductDonationForm() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="label">Product Name (Optional)</label>
+                  <label className="label">
+                    Product Name <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <Package className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
@@ -273,6 +281,7 @@ function ProductDonationForm() {
                       placeholder="e.g., Laptop, Books, Clothes"
                       value={formData.productName}
                       onChange={handleChange}
+                      required
                       className="input-field w-full pl-12"
                     />
                   </div>

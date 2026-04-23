@@ -441,8 +441,6 @@ function Dashboard() {
   };
 
   const handleRequestClick = async () => {
-    // Prevent new request if one is already pending
-    if (hasPendingRequest) return;
 
     if (!currentUser.is_verified) {
       navigate("/verify-documents");
@@ -452,8 +450,6 @@ function Dashboard() {
   };
 
   const handleDonateClick = async () => {
-    // Prevent new donation if one is already pending
-    if (hasPendingDonation) return;
 
     navigate("/donate");
   };
@@ -551,25 +547,11 @@ function Dashboard() {
             <h3 className="text-xl font-bold font-poppins text-gray-900 mb-2">Request Donation</h3>
             <p className="text-gray-600 mb-4">Need help? Submit a request for cash or products</p>
             <div className="mt-auto">
-              {noticeText && (
-                <div className={`mb-4 p-3 rounded-xl text-sm ${verificationStatus === "pending"
-                  ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
-                  : verificationStatus === "rejected"
-                    ? "bg-red-50 text-red-700 border border-red-200"
-                    : "bg-blue-50 text-blue-700 border border-blue-200"
-                  }`}>
-                  {noticeText}
-                </div>
-              )}
               <button
                 onClick={handleRequestClick}
-                disabled={verificationStatus === "pending" || hasPendingRequest}
-                className={`w-full ${verificationStatus === "pending" || hasPendingRequest
-                  ? "btn-secondary opacity-50 cursor-not-allowed"
-                  : "btn-primary"
-                  }`}
+                className="w-full btn-primary"
               >
-                {buttonText}
+                Request Now
               </button>
             </div>
           </div>
@@ -582,17 +564,11 @@ function Dashboard() {
             <h3 className="text-xl font-bold font-poppins text-gray-900 mb-2">Make a Donation</h3>
             <p className="text-gray-600 mb-4">Help someone in need with cash or products</p>
             <div className="mt-auto">
-              {hasPendingDonation && (
-                <div className="mb-4 p-3 rounded-xl text-sm bg-yellow-50 text-yellow-700 border border-yellow-200">
-                  ⏳ Your donation is pending admin review
-                </div>
-              )}
               <button
                 onClick={handleDonateClick}
-                disabled={hasPendingDonation}
-                className={`w-full ${hasPendingDonation ? "btn-secondary opacity-50 cursor-not-allowed" : "btn-primary"}`}
+                className="w-full btn-primary"
               >
-                {donationButtonText}
+                Donate Now
               </button>
             </div>
           </div>
@@ -605,17 +581,11 @@ function Dashboard() {
             <h3 className="text-xl font-bold font-poppins text-gray-900 mb-2">Browse Products</h3>
             <p className="text-gray-600 mb-4">View available products you can request</p>
             <div className="mt-auto">
-              {hasPendingProductRequest && (
-                <div className="mb-4 p-3 rounded-xl text-sm bg-yellow-50 text-yellow-700 border border-yellow-200">
-                  ⏳ Product request pending approval
-                </div>
-              )}
               <button
                 onClick={() => navigate("/browse")}
-                disabled={hasPendingProductRequest}
-                className={`w-full ${hasPendingProductRequest ? "btn-secondary opacity-50 cursor-not-allowed" : "btn-primary"}`}
+                className="w-full btn-primary"
               >
-                {hasPendingProductRequest ? "Request Pending" : "Browse Products"}
+                Browse Products
               </button>
             </div>
           </div>
