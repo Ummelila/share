@@ -74,7 +74,7 @@ function AuthenticatedNavbar() {
       setNotifications(data || []);
       const unread = (data || []).filter((n) => !n.is_read).length;
       setUnreadCount(unread);
-      
+
       // Check which payment notifications have already been submitted
       await checkSubmittedPaymentNotifications(data || []);
     } catch (error) {
@@ -87,7 +87,7 @@ function AuthenticatedNavbar() {
   const checkSubmittedPaymentNotifications = async (notifications) => {
     const paymentNotifications = notifications.filter(n => n.type === "request_approved_bank_details");
     const submittedIds = new Set();
-    
+
     for (const notification of paymentNotifications) {
       try {
         const { data, error } = await supabase
@@ -95,15 +95,15 @@ function AuthenticatedNavbar() {
           .select("*")
           .eq("related_notification_id", notification.id)
           .single();
-        
+
         if (data && !error) {
-          submittedIds.add(notification.id);
+          submittedIds.add(notification.id.toString());
         }
       } catch (err) {
         // Table doesn't exist or other error, skip
       }
     }
-    
+
     setSubmittedPaymentNotifications(submittedIds);
   };
 
@@ -126,6 +126,59 @@ function AuthenticatedNavbar() {
     }
   };
 
+  const handleBankDetailsSubmit = async (bankDetails) => {
+    try {
+      console.log("=== BANK DETAILS SUBMISSION START ===");
+      
+      const insertData = {
+        user_id: currentUser.id,
+        user_name: currentUser.name,
+        user_email: currentUser.email,
+        account_holder_name: bankDetails.accountHolderName,
+        payment_method: bankDetails.paymentMethod,
+        related_notification_id: bankDetails.relatedNotificationId,
+        created_at: new Date().toISOString()
+      };
+
+      if (bankDetails.paymentMethod === 'mobile') {
+        insertData.mobile_number = bankDetails.mobileNumber;
+      } else {
+        insertData.bank_details = bankDetails.bankDetails;
+      }
+
+      const { data, error } = await supabase
+        .from("bank_details")
+        .insert([insertData])
+        .select();
+
+      if (error) throw error;
+
+      // Create admin notification
+      await supabase
+        .from("notifications")
+        .insert([{
+          user_id: 1,
+          type: "bank_details_submitted",
+          title: "Payment Details Submitted",
+          message: `User ${currentUser.name} submitted bank details for request #${bankDetails.relatedNotificationId}`,
+          related_id: bankDetails.relatedNotificationId,
+          is_read: false,
+          created_at: new Date().toISOString()
+        }]);
+
+      // Mark as read
+      if (bankDetails.relatedNotificationId) {
+        await markAsRead(bankDetails.relatedNotificationId);
+      }
+
+      setSubmittedPaymentNotifications(prev => new Set([...prev, bankDetails.relatedNotificationId.toString()]));
+      setShowBankDetailsForm(false);
+    } catch (error) {
+      console.error("Error in handleBankDetailsSubmit:", error);
+      throw error;
+    }
+  };
+
   const markAllAsRead = async () => {
     if (!currentUser) return;
     try {
@@ -141,149 +194,6 @@ function AuthenticatedNavbar() {
       setUnreadCount(0);
     } catch (error) {
       console.error("Error marking all as read:", error);
-    }
-  };
-
-  const checkIfPaymentDetailsSubmitted = async (notificationId) => {
-    try {
-      const { data, error } = await supabase
-        .from("bank_details")
-        .select("*")
-        .eq("related_notification_id", notificationId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error("Error checking payment details:", error);
-        return false;
-      }
-
-      return data !== null;
-    } catch (error) {
-      console.error("Error checking payment details:", error);
-      return false;
-    }
-  };
-
-  const handleBankDetailsSubmit = async (bankDetails) => {
-    try {
-      console.log("=== BANK DETAILS SUBMISSION START ===");
-      console.log("Submitting bank details:", bankDetails);
-      console.log("Current user:", currentUser);
-      
-      // Prepare payment details based on payment method
-      let paymentDetails = '';
-      let insertData = {
-        user_id: currentUser.id,
-        user_name: currentUser.name,
-        user_email: currentUser.email,
-        account_holder_name: bankDetails.accountHolderName,
-        payment_method: bankDetails.paymentMethod,
-        related_notification_id: bankDetails.relatedNotificationId,
-        created_at: new Date().toISOString()
-      };
-      
-      console.log("Insert data prepared:", insertData);
-
-      if (bankDetails.paymentMethod === 'mobile') {
-        insertData.mobile_number = bankDetails.mobileNumber;
-        paymentDetails = `Mobile: ${bankDetails.mobileNumber}`;
-      } else {
-        insertData.bank_details = bankDetails.bankDetails;
-        paymentDetails = `Bank: ${bankDetails.bankDetails}`;
-      }
-
-      console.log("Insert data prepared:", insertData);
-
-      // Insert bank details into database
-      const { data, error } = await supabase
-        .from("bank_details")
-        .insert([insertData])
-        .select();
-
-      if (error) {
-        console.error("Error saving bank details:", error);
-        
-        // Check if table doesn't exist
-        if (error.code === 'PGRST116' || 
-            error.message.includes('does not exist') || 
-            error.message.includes('Could not find the table') ||
-            error.message.includes('bank_details')) {
-          // For now, just mark the notification as read and show success
-          // The admin can manually handle the bank details
-          console.log("Bank details table doesn't exist, proceeding with notification only");
-          
-          // Try to create admin notification (but don't fail if it doesn't work)
-          try {
-            await supabase
-              .from("notifications")
-              .insert([{
-                user_id: 1,
-                type: "bank_details_submitted",
-                title: "Payment Details Submitted",
-                message: `Payment Details Submitted\n\nUser: ${currentUser.name} (${currentUser.email})\nAccount Holder: ${bankDetails.accountHolderName}\nPayment Method: ${bankDetails.paymentMethod === 'mobile' ? 'Mobile Number' : 'Bank Account'}\nPayment Details: ${paymentDetails}\nSubmitted: ${new Date().toLocaleString()}`,
-                related_id: bankDetails.relatedNotificationId,
-                is_read: false,
-                created_at: new Date().toISOString()
-              }]);
-          } catch (notificationError) {
-            console.warn("Failed to create admin notification:", notificationError);
-            // Continue even if notification fails
-          }
-          
-          // Mark the original notification as read
-          if (bankDetails.relatedNotificationId) {
-            try {
-              await markAsRead(bankDetails.relatedNotificationId);
-            } catch (markReadError) {
-              console.warn("Failed to mark notification as read:", markReadError);
-            }
-          }
-          
-          return; // Success without saving to bank_details table
-        }
-        
-        throw error;
-      }
-
-      // Create notification for admin about bank details submission
-      try {
-        await supabase
-          .from("notifications")
-          .insert([{
-            user_id: 1, // Assuming admin has user_id = 1, you might need to adjust this
-            type: "bank_details_submitted",
-            title: "Payment Details Submitted",
-            message: `Payment Details Submitted\n\nUser: ${currentUser.name} (${currentUser.email})\nAccount Holder: ${bankDetails.accountHolderName}\nPayment Method: ${bankDetails.paymentMethod === 'mobile' ? 'Mobile Number' : 'Bank Account'}\nPayment Details: ${paymentDetails}\nSubmitted: ${new Date().toLocaleString()}`,
-            related_id: bankDetails.relatedNotificationId,
-            is_read: false,
-            created_at: new Date().toISOString()
-          }]);
-      } catch (notificationError) {
-        console.warn("Failed to create admin notification:", notificationError);
-        // Continue even if notification fails
-      }
-
-      // Mark the original notification as read
-      if (bankDetails.relatedNotificationId) {
-        try {
-          await markAsRead(bankDetails.relatedNotificationId);
-        } catch (markReadError) {
-          console.warn("Failed to mark notification as read:", markReadError);
-        }
-      }
-
-      console.log("Bank details submitted successfully:", data);
-      console.log("=== BANK DETAILS SUBMISSION COMPLETE ===");
-      
-      // Add this notification to the submitted set
-      setSubmittedPaymentNotifications(prev => new Set([...prev, bankDetails.relatedNotificationId]));
-    } catch (error) {
-      console.error("=== BANK DETAILS SUBMISSION ERROR ===");
-      console.error("Error in handleBankDetailsSubmit:", error);
-      console.error("Error type:", typeof error);
-      console.error("Error message:", error.message);
-      console.error("Error stack:", error.stack);
-      throw error;
     }
   };
 
@@ -356,8 +266,6 @@ function AuthenticatedNavbar() {
 
   return (
     <>
-
-
       {/* Side Drawer Backdrop */}
       {sideMenuOpen && (
         <div
@@ -454,8 +362,8 @@ function AuthenticatedNavbar() {
                     to={link.tab ? `${link.path}?tab=${link.tab}` : link.path}
                     onClick={(e) => handleNavClick(link.path, link.tab, e)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${isActive(link.path, link.tab)
-                        ? 'bg-primary-50 text-primary-600'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-primary-600'
+                      ? 'bg-primary-50 text-primary-600'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-primary-600'
                       }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -578,8 +486,8 @@ function AuthenticatedNavbar() {
                     setMobileMenuOpen(false);
                   }}
                   className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${isActive(link.path, link.tab)
-                      ? 'bg-primary-50 text-primary-600'
-                      : 'text-gray-600 hover:bg-gray-50'
+                    ? 'bg-primary-50 text-primary-600'
+                    : 'text-gray-600 hover:bg-gray-50'
                     }`}
                 >
                   <span className="flex items-center gap-2">
@@ -713,8 +621,8 @@ function AuthenticatedNavbar() {
                     }
 
                     const isBankDetailsRequest = notification.type === "request_approved_bank_details";
-                    const isPaymentSubmitted = submittedPaymentNotifications.has(notification.id);
-                    
+                    const isPaymentSubmitted = submittedPaymentNotifications.has(notification.id.toString());
+
                     return (
                       <div
                         key={notification.id}
@@ -723,21 +631,21 @@ function AuthenticatedNavbar() {
                             setSelectedNotification(notification);
                             setShowBankDetailsForm(true);
                             setShowNotifications(false);
-                          } else if (isUnread && !isPaymentSubmitted) {
+                          } else if (isUnread) {
                             markAsRead(notification.id);
                           }
                         }}
-                        className={`p-4 transition-colors ${
-                          isPaymentSubmitted 
-                            ? 'bg-gray-100 cursor-not-allowed opacity-60' 
-                            : `hover:bg-gray-50 cursor-pointer ${isUnread ? 'bg-primary-50/30' : ''}`
-                          } ${isRejected ? 'border-l-4 border-red-500' : ''} ${isBankDetailsRequest ? 'border-l-4 border-blue-500' : ''}`}
+                        className={`p-4 transition-colors ${isPaymentSubmitted
+                            ? 'bg-gray-100 cursor-not-allowed opacity-60 pointer-events-none'
+                            : 'hover:bg-gray-50 cursor-pointer'
+                          } ${isUnread && !isPaymentSubmitted ? 'bg-primary-50/30' : ''
+                          } ${isRejected ? 'border-l-4 border-red-500' : ''} ${isPositive ? 'border-l-4 border-green-500' : ''} ${isBankDetailsRequest ? 'border-l-4 border-blue-500' : ''}`}
                       >
                         <div className="flex gap-3">
                           <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
-                            isBankDetailsRequest ? 'bg-blue-100 text-blue-600' :
-                            isPositive ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-                          }`}>
+                              isBankDetailsRequest ? 'bg-blue-100 text-blue-600' :
+                              isPositive ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                            }`}>
                             {isBankDetailsRequest ? (
                               <CreditCard className="w-5 h-5" />
                             ) : isPositive ? (
@@ -759,23 +667,6 @@ function AuthenticatedNavbar() {
                               {displayMessage}
                               {isRejected && hasReason && !isExpanded && (
                                 <span className="text-primary-600 font-medium"> (Reason available)</span>
-                              )}
-                              {isBankDetailsRequest && (
-                                <span className={`font-medium block mt-1 ${
-                                  isPaymentSubmitted 
-                                    ? 'text-gray-500' 
-                                    : 'text-blue-600'
-                                }`}>
-                                  {isPaymentSubmitted ? (
-                                    <>
-                                      ✅ Payment details already submitted
-                                    </>
-                                  ) : (
-                                    <>
-                                      💳 Click here to provide your bank details
-                                    </>
-                                  )}
-                                </span>
                               )}
                             </p>
                             {isRejected && hasReason && (
@@ -822,7 +713,6 @@ function AuthenticatedNavbar() {
         </>
       )}
 
-      {/* Bank Details Form Modal */}
       {showBankDetailsForm && (
         <BankDetailsForm
           notification={selectedNotification}

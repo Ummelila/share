@@ -11,6 +11,7 @@ function Login() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -55,6 +56,7 @@ function Login() {
     setError('');
     
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('users')
         .select('*')
@@ -85,6 +87,7 @@ function Login() {
       }
     } catch (error) {
       setError(error.message);
+      setLoading(false);
     }
   };
 
@@ -192,8 +195,12 @@ function Login() {
                 </Link>
               </div>
 
-              <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2">
-                <LogIn className="w-5 h-5" /> Sign In
+              <button 
+                type="submit" 
+                className={`btn-primary w-full flex items-center justify-center gap-2 ${loading ? 'btn-loading' : ''}`}
+                disabled={loading}
+              >
+                {!loading && <LogIn className="w-5 h-5" />} {loading ? 'Signing In...' : 'Sign In'}
               </button>
             </form>
 

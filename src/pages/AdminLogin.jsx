@@ -122,8 +122,8 @@ function AdminLogin() {
             />
           </div>
 
-          <button type="submit" className="btn btn-admin-login" disabled={loading}>
-            {loading ? 'Logging in…' : 'Login as Admin'}
+          <button type="submit" className={`btn btn-admin-login ${loading ? 'btn-loading' : ''}`} disabled={loading}>
+            {loading ? 'Logging in...' : 'Login as Admin'}
           </button>
         </form>
 

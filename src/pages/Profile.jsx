@@ -425,15 +425,10 @@ function Profile() {
                     </button>
                     <button
                       type="submit"
-                      className="btn-primary flex-1 flex items-center justify-center gap-2"
+                      className={`btn-primary flex-1 flex items-center justify-center gap-2 ${profileLoading ? 'btn-loading' : ''}`}
                       disabled={profileLoading}
                     >
-                      {profileLoading ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          <span>Saving...</span>
-                        </>
-                      ) : (
+                      {profileLoading ? 'Saving...' : (
                         <>
                           <Save className="w-4 h-4" />
                           <span>Save Changes</span>
@@ -593,15 +588,10 @@ function Profile() {
                       </button>
                       <button
                         type="submit"
-                        className="btn-primary flex-1 flex items-center justify-center gap-2"
+                        className={`btn-primary flex-1 flex items-center justify-center gap-2 ${passwordLoading ? 'btn-loading' : ''}`}
                         disabled={passwordLoading}
                       >
-                        {passwordLoading ? (
-                          <>
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            <span>Changing...</span>
-                          </>
-                        ) : (
+                        {passwordLoading ? 'Changing...' : (
                           <>
                             <Lock className="w-4 h-4" />
                             <span>Change Password</span>

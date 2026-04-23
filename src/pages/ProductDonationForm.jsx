@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Package, ArrowLeft, Upload, FileText, CheckCircle, AlertCircle, Info, Sparkles, Shield, Clock, Image as ImageIcon } from "lucide-react";
 import AuthenticatedNavbar from "../components/AuthenticatedNavbar";
 import { supabase } from "../supabaseClient";
+import CustomDropdown from "../components/CustomDropdown";
 
 function ProductDonationForm() {
   const navigate = useNavigate();
@@ -281,20 +282,12 @@ function ProductDonationForm() {
                   <label className="label">
                     Category <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="productCategory"
+                  <CustomDropdown
+                    options={productCategories.map(cat => ({ value: cat, label: cat }))}
                     value={formData.productCategory}
-                    onChange={handleChange}
-                    required
-                    className="input-field w-full"
-                  >
-                    <option value="">Select a category</option>
-                    {productCategories.map((cat, index) => (
-                      <option key={index} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(val) => setFormData({ ...formData, productCategory: val })}
+                    placeholder="Select a category"
+                  />
                 </div>
 
                 {formData.productCategory === "Other" && (
@@ -377,15 +370,10 @@ function ProductDonationForm() {
 
                 <button
                   type="submit"
-                  className="btn-primary w-full flex items-center justify-center gap-2"
+                  className={`btn-primary w-full flex items-center justify-center gap-2 ${loading ? 'btn-loading' : ''}`}
                   disabled={loading}
                 >
-                  {loading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Submitting...</span>
-                    </>
-                  ) : (
+                  {loading ? 'Submitting...' : (
                     <>
                       <CheckCircle className="w-5 h-5" />
                       <span>Submit Product Donation</span>

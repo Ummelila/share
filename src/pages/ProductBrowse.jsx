@@ -5,6 +5,7 @@ import AuthenticatedNavbar from "../components/AuthenticatedNavbar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 import SkeletonLoader from "../components/SkeletonLoader";
+import CustomDropdown from "../components/CustomDropdown";
 import { getErrorMessage } from "../utils/errorHandler";
 import "../styles/ProductBrowse.css";
 
@@ -352,45 +353,42 @@ function ProductBrowse() {
         <div className="filters-row">
           <div className="filter-group">
             <label>Category</label>
-            <select
+            <CustomDropdown
+              options={categories.map(cat => ({ value: cat === "All" ? "all" : cat, label: cat }))}
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="filter-select"
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat === "All" ? "all" : cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
+              onChange={setSelectedCategory}
+              placeholder="Select Category"
+            />
           </div>
 
           <div className="filter-group">
             <label>Date</label>
-            <select
+            <CustomDropdown
+              options={[
+                { value: "all", label: "All Time" },
+                { value: "today", label: "Today" },
+                { value: "week", label: "This Week" },
+                { value: "month", label: "This Month" }
+              ]}
               value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-              className="filter-select"
-            >
-              <option value="all">All Time</option>
-              <option value="today">Today</option>
-              <option value="week">This Week</option>
-              <option value="month">This Month</option>
-            </select>
+              onChange={setDateFilter}
+              placeholder="Select Date"
+            />
           </div>
 
           <div className="filter-group">
             <label>Sort By</label>
-            <select
+            <CustomDropdown
+              options={[
+                { value: "newest", label: "Newest First" },
+                { value: "oldest", label: "Oldest First" },
+                { value: "name-asc", label: "Name (A-Z)" },
+                { value: "name-desc", label: "Name (Z-A)" }
+              ]}
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="filter-select"
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="name-asc">Name (A-Z)</option>
-              <option value="name-desc">Name (Z-A)</option>
-            </select>
+              onChange={setSortBy}
+              placeholder="Sort By"
+            />
           </div>
 
           {(searchTerm || selectedCategory !== "all" || dateFilter !== "all") && (
@@ -593,7 +591,7 @@ function ProductBrowse() {
                   Cancel
                 </button>
                 <button
-                  className="btn-request-product"
+                  className={`btn-request-product ${requestLoading ? 'btn-loading' : ''}`}
                   onClick={submitProductRequest}
                   disabled={requestLoading || !requestReason.trim()}
                 >

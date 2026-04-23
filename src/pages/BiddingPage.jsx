@@ -13,6 +13,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 
 import SkeletonLoader from "../components/SkeletonLoader";
+import CustomDropdown from "../components/CustomDropdown";
 
 import { getErrorMessage, isNetworkError, shouldRetry, getRetryDelay } from "../utils/errorHandler";
 
@@ -1432,23 +1433,25 @@ function BiddingPage() {
 
                 </label>
 
-                <select
+                <CustomDropdown
+
+                  options={[
+
+                    { value: "all", label: "All Status" },
+
+                    { value: "active", label: "🟢 Active" },
+
+                    { value: "upcoming", label: "⏰ Upcoming" }
+
+                  ]}
 
                   value={statusFilter}
 
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  onChange={setStatusFilter}
 
-                  className="px-4 py-3 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all hover:border-accent-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_1rem_center] pr-10"
+                  placeholder="Select Status"
 
-                >
-
-                  <option value="all">All Status</option>
-
-                  <option value="active">🟢 Active</option>
-
-                  <option value="upcoming">⏰ Upcoming</option>
-
-                </select>
+                />
 
               </div>
 
@@ -1466,37 +1469,39 @@ function BiddingPage() {
 
                 </label>
 
-                <select
+                <CustomDropdown
+
+                  options={[
+
+                    { value: "all", label: "All Categories" },
+
+                    { value: "Electronics", label: "Electronics" },
+
+                    { value: "Clothing", label: "Clothing" },
+
+                    { value: "Furniture", label: "Furniture" },
+
+                    { value: "Books", label: "Books" },
+
+                    { value: "Toys", label: "Toys" },
+
+                    { value: "Food Items", label: "Food Items" },
+
+                    { value: "Medical Supplies", label: "Medical Supplies" },
+
+                    { value: "Educational Materials", label: "Educational Materials" },
+
+                    { value: "Other", label: "Other" }
+
+                  ]}
 
                   value={categoryFilter}
 
-                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  onChange={setCategoryFilter}
 
-                  className="px-4 py-3 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all hover:border-accent-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_1rem_center] pr-10"
+                  placeholder="Select Category"
 
-                >
-
-                  <option value="all">All Categories</option>
-
-                  <option value="Electronics">Electronics</option>
-
-                  <option value="Clothing">Clothing</option>
-
-                  <option value="Furniture">Furniture</option>
-
-                  <option value="Books">Books</option>
-
-                  <option value="Toys">Toys</option>
-
-                  <option value="Food Items">Food Items</option>
-
-                  <option value="Medical Supplies">Medical Supplies</option>
-
-                  <option value="Educational Materials">Educational Materials</option>
-
-                  <option value="Other">Other</option>
-
-                </select>
+                />
 
               </div>
 
@@ -1514,27 +1519,18 @@ function BiddingPage() {
 
                 </label>
 
-                <select
-
+                <CustomDropdown
+                  options={[
+                    { value: "newest", label: "Newest First" },
+                    { value: "oldest", label: "Oldest First" },
+                    { value: "ending-soon", label: "Ending Soon" },
+                    { value: "price-low", label: "Price: Low to High" },
+                    { value: "price-high", label: "Price: High to Low" }
+                  ]}
                   value={sortBy}
-
-                  onChange={(e) => setSortBy(e.target.value)}
-
-                  className="px-4 py-3 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all hover:border-accent-300 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M6%209L1%204h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_1rem_center] pr-10"
-
-                >
-
-                  <option value="newest">Newest First</option>
-
-                  <option value="oldest">Oldest First</option>
-
-                  <option value="ending-soon">Ending Soon</option>
-
-                  <option value="price-low">Price: Low to High</option>
-
-                  <option value="price-high">Price: High to Low</option>
-
-                </select>
+                  onChange={setSortBy}
+                  placeholder="Sort By"
+                />
 
               </div>
 
@@ -2490,21 +2486,11 @@ function BiddingPage() {
 
                     disabled={bidLoading || !bidAmount.trim()}
 
-                    className="btn-accent flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`btn-accent flex-1 ${bidLoading ? 'btn-loading' : ''}`}
 
                   >
 
-                    {bidLoading ? (
-
-                      <span className="flex items-center justify-center gap-2">
-
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-
-                        Placing Bid...
-
-                      </span>
-
-                    ) : (
+                    {bidLoading ? "Placing Bid..." : (
 
                       <span className="flex items-center justify-center gap-2">
 

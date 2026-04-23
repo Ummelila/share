@@ -310,14 +310,9 @@ function Signup() {
               <button 
                 type="submit" 
                 disabled={loading}
-                className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50"
+                className={`btn-primary w-full flex items-center justify-center gap-2 ${loading ? 'btn-loading' : ''}`}
               >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Creating Account...
-                  </>
-                ) : (
+                {loading ? 'Creating Account...' : (
                   <>
                     <UserPlus className="w-5 h-5" /> Create Account
                   </>

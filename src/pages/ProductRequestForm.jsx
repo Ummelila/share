@@ -320,15 +320,10 @@ function ProductRequestForm() {
 
               <button
                 type="submit"
-                className="btn-primary w-full flex items-center justify-center gap-2"
+                className={`btn-primary w-full flex items-center justify-center gap-2 ${loading ? 'btn-loading' : ''}`}
                 disabled={loading}
               >
-                {loading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Submitting...</span>
-                  </>
-                ) : (
+                {loading ? 'Submitting...' : (
                   <>
                     <CheckCircle className="w-5 h-5" />
                     <span>Submit Request</span>

@@ -131,8 +131,45 @@ h1, h2, h3, h4, h5, h6 {
     @apply bg-gradient-to-r from-primary-500 to-secondary-500;
   }
 
-  .glass-effect {
-    @apply bg-white/80 backdrop-blur-md;
+  .btn-primary:disabled, .btn-secondary:disabled, .btn-accent:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+    filter: grayscale(0.5);
+  }
+
+  .btn-loading {
+    position: relative !important;
+    pointer-events: none !important;
+    opacity: 0.8 !important;
+    cursor: not-allowed !important;
+    transition: all 0.3s ease !important;
+    padding-right: 40px !important; /* Ensure space for the spinner */
+  }
+
+  .btn-loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    right: 12px;
+    margin-top: -8px; /* Half of height to center vertically */
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s linear infinite;
+    display: block !important;
+  }
+
+  @keyframes button-loading-spinner {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 }
 
@@ -345,4 +382,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .custom-dropdown-options::-webkit-scrollbar-thumb:hover {
   background: #124074;
+}
+
+@keyframes button-loading-spinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

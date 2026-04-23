@@ -1226,14 +1226,9 @@ const BiddingGallery = () => {
                                     <button
                                         type="submit"
                                         disabled={bidLoading || !bidAmount.trim()}
-                                        className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className={`btn-primary flex-1 ${bidLoading ? 'btn-loading' : ''}`}
                                     >
-                                        {bidLoading ? (
-                                            <span className="flex items-center justify-center gap-2">
-                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                                Placing Bid...
-                                            </span>
-                                        ) : (
+                                        {bidLoading ? 'Placing Bid...' : (
                                             <span className="flex items-center justify-center gap-2">
                                                 <Gavel className="w-5 h-5" />
                                                 Place Bid

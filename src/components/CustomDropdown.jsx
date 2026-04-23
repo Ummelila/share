@@ -34,30 +34,39 @@ function CustomDropdown({ options, value, onChange, placeholder = "Select..." })
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* Simple HTML Select as fallback */}
-      <select
-        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg bg-white cursor-pointer"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+    <div className="relative w-full" ref={dropdownRef}>
+      {/* Custom Dropdown Trigger */}
+      <button
+        type="button"
+        className={`w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl flex items-center justify-between text-sm font-medium text-gray-700 hover:border-primary-300 hover:bg-gray-50 transition-all duration-200 ${isOpen ? 'ring-2 ring-primary-100 border-primary-400' : ''}`}
+        onClick={toggleDropdown}
       >
-        {options.map((option, index) => (
-          <option key={option.value || index} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+        <span className="truncate">{selectedLabel}</span>
+        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
       
-      {/* Custom Dropdown (hidden) */}
-      <div className="hidden">
-        <div
-          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg bg-white cursor-pointer flex items-center justify-between"
-          onClick={toggleDropdown}
-        >
-          <span className="flex-1 text-gray-700">{selectedLabel}</span>
-          <ChevronDown className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} size={20} />
+      {/* Dropdown Menu */}
+      {isOpen && (
+        <div className="absolute left-0 right-0 mt-2 bg-white rounded-xl shadow-card border border-gray-200 py-2 z-[100] animate-slide-up">
+          <div className="max-h-60 overflow-y-auto custom-scrollbar">
+            {options.map((option, index) => (
+              <button
+                key={option.value || index}
+                type="button"
+                className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                  value === option.value 
+                    ? 'bg-primary-50 text-primary-700 font-semibold' 
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+                onClick={() => handleSelect(option)}
+              >
+                {option.label}
+                {value === option.value && <Check className="w-4 h-4" />}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

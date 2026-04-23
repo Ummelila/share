@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { DollarSign, ArrowLeft, Upload, FileText, CheckCircle, AlertCircle, Info, Sparkles, Shield, Clock } from "lucide-react";
 import AuthenticatedNavbar from "../components/AuthenticatedNavbar";
 import { supabase } from "../supabaseClient";
+import CustomDropdown from "../components/CustomDropdown";
 
 function CashRequestForm() {
   const navigate = useNavigate();
@@ -221,20 +222,12 @@ function CashRequestForm() {
                   <label className="label">
                     Category <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="category"
+                  <CustomDropdown
+                    options={categories.map(cat => ({ value: cat, label: cat }))}
                     value={formData.category}
-                    onChange={handleChange}
-                    required
-                    className="input-field w-full"
-                  >
-                    <option value="">Select a category</option>
-                    {categories.map((cat, index) => (
-                      <option key={index} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(val) => setFormData({ ...formData, category: val })}
+                    placeholder="Select a category"
+                  />
                 </div>
 
                 {formData.category === "Other" && (
@@ -305,15 +298,10 @@ function CashRequestForm() {
 
                 <button
                   type="submit"
-                  className="btn-primary w-full flex items-center justify-center gap-2"
+                  className={`btn-primary w-full flex items-center justify-center gap-2 ${loading ? 'btn-loading' : ''}`}
                   disabled={loading}
                 >
-                  {loading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Submitting...</span>
-                    </>
-                  ) : (
+                  {loading ? 'Submitting...' : (
                     <>
                       <CheckCircle className="w-5 h-5" />
                       <span>Submit Request</span>

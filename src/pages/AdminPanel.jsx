@@ -19,6 +19,7 @@ function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null); // { type: 'success'|'error', message }
   const [isLoading, setIsLoading] = useState(false); // Prevent duplicate loads
+  const [submittingId, setSubmittingId] = useState(null); // Track which item is being submitted
   const [showBiddingModal, setShowBiddingModal] = useState(false);
   const [adminNotifications, setAdminNotifications] = useState([]);
   const [showAdminNotifications, setShowAdminNotifications] = useState(false);
@@ -275,7 +276,6 @@ function AdminPanel() {
     }
   };
 
-
   const loadAdminNotifications = async () => {
     try {
       const { data, error } = await supabase
@@ -423,7 +423,9 @@ function AdminPanel() {
   };
 
   const handleApprove = async (request) => {
+    const actionId = `verify-${request.id}`;
     try {
+      setSubmittingId(actionId);
       const { error: userError } = await supabase
         .from("users")
         .update({ is_verified: true })
@@ -454,11 +456,15 @@ function AdminPanel() {
       reloadVerifications();
     } catch (error) {
       setFeedback({ type: "error", message: "Error verifying user: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
-  const handleReject = async (requestId, reason = "") => {
+  const handleReject = async (requestId, reason) => {
+    const actionId = `verify-${requestId}`;
     try {
+      setSubmittingId(actionId);
       // Get request details before updating
       const { data: request } = await supabase
         .from("verification_requests")
@@ -498,11 +504,15 @@ function AdminPanel() {
       reloadVerifications();
     } catch (error) {
       setFeedback({ type: "error", message: "Error rejecting verification: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
   const handleApproveRequest = async (id) => {
+    const actionId = `cash-req-${id}`;
     try {
+      setSubmittingId(actionId);
       // Get request details before updating
       const { data: request } = await supabase
         .from("cash_requests")
@@ -525,8 +535,8 @@ function AdminPanel() {
           request.user_name,
           "request_approved_bank_details",
           "Request Approved",
-          `Your cash request of PKR ${request.amount} has been approved! Please provide your bank details.`,
-          `Amount: PKR ${request.amount}\nCategory: ${request.category}\nDescription: ${request.description}\n\nPlease provide your bank details to receive the payment.`,
+          `Your cash request of PKR ${request.amount} has been approved!`,
+          `Amount: PKR ${request.amount}\nCategory: ${request.category}\nDescription: ${request.description}\n\nYour request has been processed.`,
           id
         );
       }
@@ -535,11 +545,15 @@ function AdminPanel() {
       reloadCashRequests();
     } catch (error) {
       setFeedback({ type: "error", message: "Error approving request: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
-  const handleRejectRequest = async (id, reason = "") => {
+  const handleRejectRequest = async (id, reason) => {
+    const actionId = `cash-req-${id}`;
     try {
+      setSubmittingId(actionId);
       // Get request details before updating
       const { data: request } = await supabase
         .from("cash_requests")
@@ -579,11 +593,15 @@ function AdminPanel() {
       reloadCashRequests();
     } catch (error) {
       setFeedback({ type: "error", message: "Error rejecting request: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
   const handleApproveDonation = async (id) => {
+    const actionId = `cash-don-${id}`;
     try {
+      setSubmittingId(actionId);
       // Get donation details before updating
       const { data: donation } = await supabase
         .from("cash_donations")
@@ -616,11 +634,15 @@ function AdminPanel() {
       reloadCashDonations();
     } catch (error) {
       setFeedback({ type: "error", message: "Error approving donation: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
-  const handleRejectDonation = async (id, reason = "") => {
+  const handleRejectDonation = async (id, reason) => {
+    const actionId = `cash-don-${id}`;
     try {
+      setSubmittingId(actionId);
       // Get donation details before updating
       const { data: donation } = await supabase
         .from("cash_donations")
@@ -660,6 +682,8 @@ function AdminPanel() {
       reloadCashDonations();
     } catch (error) {
       setFeedback({ type: "error", message: "Error rejecting donation: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
@@ -669,7 +693,9 @@ function AdminPanel() {
   };
 
   const handleApproveProductDonation = async (id) => {
+    const actionId = `prod-don-${id}`;
     try {
+      setSubmittingId(actionId);
       // Get donation details before updating
       const { data: donation } = await supabase
         .from("product_donations")
@@ -702,11 +728,15 @@ function AdminPanel() {
       reloadProductDonations();
     } catch (error) {
       setFeedback({ type: "error", message: "Error approving product donation: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
-  const handleRejectProductDonation = async (id, reason = "") => {
+  const handleRejectProductDonation = async (id, reason) => {
+    const actionId = `prod-don-${id}`;
     try {
+      setSubmittingId(actionId);
       // Get donation details before updating
       const { data: donation } = await supabase
         .from("product_donations")
@@ -746,11 +776,15 @@ function AdminPanel() {
       reloadProductDonations();
     } catch (error) {
       setFeedback({ type: "error", message: "Error rejecting product donation: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
   const handleApproveProductRequest = async (id) => {
+    const actionId = `prod-req-${id}`;
     try {
+      setSubmittingId(actionId);
       // Get request details before updating
       const { data: request } = await supabase
         .from("product_requests")
@@ -783,11 +817,15 @@ function AdminPanel() {
       reloadProductRequests();
     } catch (error) {
       setFeedback({ type: "error", message: "Error approving product request: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
-  const handleRejectProductRequest = async (id, reason = "") => {
+  const handleRejectProductRequest = async (id, reason) => {
+    const actionId = `prod-req-${id}`;
     try {
+      setSubmittingId(actionId);
       // Get request details before updating
       const { data: request } = await supabase
         .from("product_requests")
@@ -827,22 +865,24 @@ function AdminPanel() {
       reloadProductRequests();
     } catch (error) {
       setFeedback({ type: "error", message: "Error rejecting product request: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
-  const confirmReject = () => {
-    if (!rejectModal) return;
+  const confirmReject = async () => {
+    if (!rejectModal || !!submittingId) return;
 
     if (rejectModal.type === "verification") {
-      handleReject(rejectModal.id, rejectionReason);
+      await handleReject(rejectModal.id, rejectionReason);
     } else if (rejectModal.type === "request") {
-      handleRejectRequest(rejectModal.id, rejectionReason);
+      await handleRejectRequest(rejectModal.id, rejectionReason);
     } else if (rejectModal.type === "donation") {
-      handleRejectDonation(rejectModal.id, rejectionReason);
+      await handleRejectDonation(rejectModal.id, rejectionReason);
     } else if (rejectModal.type === "product-donation") {
-      handleRejectProductDonation(rejectModal.id, rejectionReason);
+      await handleRejectProductDonation(rejectModal.id, rejectionReason);
     } else if (rejectModal.type === "product-request") {
-      handleRejectProductRequest(rejectModal.id, rejectionReason);
+      await handleRejectProductRequest(rejectModal.id, rejectionReason);
     }
   };
 
@@ -1127,7 +1167,9 @@ function AdminPanel() {
 
   // Verify payment for winner
   const handleVerifyPayment = async (biddingId) => {
+    const actionId = `bid-verify-${biddingId}`;
     try {
+      setSubmittingId(actionId);
       // Get current bidding product
       const { data: currentBidding } = await supabase
         .from("bidding_products")
@@ -1178,12 +1220,16 @@ function AdminPanel() {
     } catch (error) {
       console.error("Error verifying payment:", error);
       setFeedback({ type: "error", message: "Error verifying payment: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
   // Mark delivery as arranged
   const handleArrangeDelivery = async (biddingId) => {
+    const actionId = `bid-deliver-${biddingId}`;
     try {
+      setSubmittingId(actionId);
       const { error } = await supabase
         .from("bidding_products")
         .update({ delivery_arranged: true, status: "completed" })
@@ -1216,6 +1262,8 @@ function AdminPanel() {
     } catch (error) {
       console.error("Error arranging delivery:", error);
       setFeedback({ type: "error", message: "Error arranging delivery: " + error.message });
+    } finally {
+      setSubmittingId(null);
     }
   };
 
@@ -1253,98 +1301,48 @@ function AdminPanel() {
             
             {/* Notification Dropdown */}
             {showAdminNotifications && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                right: '0',
-                marginTop: '0.5rem',
-                width: '320px',
-                maxHeight: '400px',
-                overflowY: 'auto',
-                backgroundColor: 'white',
-                border: '1px solid #e5e7eb',
-                borderRadius: '0.5rem',
-                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
-                zIndex: 9999,
-                animation: 'dropdownFadeIn 0.3s ease-out',
-                transformOrigin: 'top right'
-              }}>
-                <div style={{
-                  padding: '1rem',
-                  borderBottom: '1px solid #e5e7eb',
-                  fontWeight: '600',
-                  color: '#1f2937'
-                }}>
-                  Notifications
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-card border border-gray-200 z-[100] animate-slide-up overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+                  <h3 className="text-sm font-bold text-gray-900">Notifications</h3>
                 </div>
                 
-                {adminNotifications.length === 0 ? (
-                  <div style={{
-                    padding: '2rem',
-                    textAlign: 'center',
-                    color: '#6b7280'
-                  }}>
-                    No notifications
-                  </div>
-                ) : (
-                  adminNotifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      style={{
-                        padding: '1rem',
-                        borderBottom: '1px solid #f3f4f6',
-                        backgroundColor: notification.is_read ? '#ffffff' : '#f9fafb',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onClick={() => markAdminNotificationAsRead(notification.id)}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = notification.is_read ? '#f3f4f6' : '#f3f4f6';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = notification.is_read ? '#ffffff' : '#f9fafb';
-                      }}
-                    >
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '0.75rem'
-                      }}>
-                        <div style={{
-                          width: '8px',
-                          height: '8px',
-                          borderRadius: '50%',
-                          backgroundColor: notification.is_read ? '#d1d5db' : '#ef4444',
-                          marginTop: '0.25rem',
-                          flexShrink: 0
-                        }} />
-                        <div style={{ flex: 1 }}>
-                          <div style={{
-                            fontSize: '0.875rem',
-                            fontWeight: notification.is_read ? '400' : '600',
-                            color: '#1f2937',
-                            marginBottom: '0.25rem'
-                          }}>
-                            {notification.user_name || 'User'} submitted bank details
-                          </div>
-                          <div style={{
-                            fontSize: '0.75rem',
-                            color: '#6b7280',
-                            marginBottom: '0.25rem'
-                          }}>
-                            {notification.user_email}
-                          </div>
-                          <div style={{
-                            fontSize: '0.75rem',
-                            color: '#9ca3af'
-                          }}>
-                            {new Date(notification.created_at).toLocaleString()}
+                <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                  {adminNotifications.length === 0 ? (
+                    <div className="p-8 text-center text-gray-500">
+                      <Bell className="w-8 h-8 mx-auto text-gray-300 mb-2" />
+                      <p className="text-sm font-medium">No notifications yet</p>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-gray-50">
+                      {adminNotifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`p-4 transition-all duration-200 cursor-pointer ${
+                            notification.is_read ? 'bg-white' : 'bg-primary-50/30'
+                          } hover:bg-gray-50`}
+                          onClick={() => markAdminNotificationAsRead(notification.id)}
+                        >
+                          <div className="flex gap-3">
+                            <div className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${
+                              notification.is_read ? 'bg-gray-200' : 'bg-red-500 animate-pulse'
+                            }`} />
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm text-gray-900 mb-0.5 ${!notification.is_read ? 'font-semibold' : ''}`}>
+                                {notification.user_name || 'User'} submitted bank details
+                              </p>
+                              <p className="text-xs text-gray-500 truncate mb-1">
+                                {notification.user_email}
+                              </p>
+                              <p className="text-[10px] text-gray-400 font-medium">
+                                {new Date(notification.created_at).toLocaleString()}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))
-                )}
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -1573,14 +1571,16 @@ function AdminPanel() {
                           {request.status === "pending" && (
                             <div className="action-buttons">
                               <button
-                                className="btn-approve"
+                                className={`btn-approve ${submittingId === `verify-${request.id}` ? 'btn-loading' : ''}`}
                                 onClick={() => handleApprove(request)}
+                                disabled={submittingId === `verify-${request.id}`}
                               >
-                                Approve & Verify User
+                                {submittingId === `verify-${request.id}` ? 'Approving...' : 'Approve & Verify User'}
                               </button>
                               <button
                                 className="btn-reject"
                                 onClick={() => openRejectModal("verification", request.id, request.user_name)}
+                                disabled={submittingId === `verify-${request.id}`}
                               >
                                 Reject
                               </button>
@@ -1716,14 +1716,16 @@ function AdminPanel() {
                         {request.status === "pending" && (
                           <div className="action-buttons">
                             <button
-                              className="btn-approve"
+                              className={`btn-approve ${submittingId === `cash-req-${request.id}` ? 'btn-loading' : ''}`}
                               onClick={() => handleApproveRequest(request.id)}
+                              disabled={submittingId === `cash-req-${request.id}`}
                             >
-                              Approve
+                              {submittingId === `cash-req-${request.id}` ? 'Approving...' : 'Approve'}
                             </button>
                             <button
                               className="btn-reject"
                               onClick={() => openRejectModal("request", request.id, request.user_name)}
+                              disabled={submittingId === `cash-req-${request.id}`}
                             >
                               Reject
                             </button>
@@ -1850,14 +1852,16 @@ function AdminPanel() {
                         {request.status === "pending" && (
                           <div className="action-buttons">
                             <button
-                              className="btn-approve"
+                              className={`btn-approve ${submittingId === `prod-req-${request.id}` ? 'btn-loading' : ''}`}
                               onClick={() => handleApproveProductRequest(request.id)}
+                              disabled={submittingId === `prod-req-${request.id}`}
                             >
-                              Approve
+                              {submittingId === `prod-req-${request.id}` ? 'Approving...' : 'Approve'}
                             </button>
                             <button
                               className="btn-reject"
                               onClick={() => openRejectModal("product-request", request.id, request.user_name)}
+                              disabled={submittingId === `prod-req-${request.id}`}
                             >
                               Reject
                             </button>
@@ -1978,14 +1982,16 @@ function AdminPanel() {
                         {donation.status === "pending" && (
                           <div className="action-buttons">
                             <button
-                              className="btn-approve"
+                              className={`btn-approve ${submittingId === `cash-don-${donation.id}` ? 'btn-loading' : ''}`}
                               onClick={() => handleApproveDonation(donation.id)}
+                              disabled={submittingId === `cash-don-${donation.id}`}
                             >
-                              Approve
+                              {submittingId === `cash-don-${donation.id}` ? 'Approving...' : 'Approve'}
                             </button>
                             <button
                               className="btn-reject"
                               onClick={() => openRejectModal("donation", donation.id, donation.user_name)}
+                              disabled={submittingId === `cash-don-${donation.id}`}
                             >
                               Reject
                             </button>
@@ -2050,15 +2056,16 @@ function AdminPanel() {
                       {donation.status === "pending" && (
                         <div className="action-buttons">
                           <button
-                            className="btn-approve"
+                            className={`btn-approve ${submittingId === `prod-don-${donation.id}` ? 'btn-loading' : ''}`}
                             onClick={() => handleApproveProductDonation(donation.id)}
-                            disabled={donation.ai_result === "unsafe"}
+                            disabled={donation.ai_result === "unsafe" || submittingId === `prod-don-${donation.id}`}
                           >
-                            {donation.ai_result === "unsafe" ? "⚠️ Cannot Approve (AI Flagged)" : "Approve"}
+                            {submittingId === `prod-don-${donation.id}` ? 'Approving...' : (donation.ai_result === "unsafe" ? "⚠️ Cannot Approve (AI Flagged)" : "Approve")}
                           </button>
                           <button
                             className="btn-reject"
                             onClick={() => openRejectModal("product-donation", donation.id, donation.user_name)}
+                            disabled={submittingId === `prod-don-${donation.id}`}
                           >
                             Reject
                           </button>
@@ -2339,30 +2346,30 @@ function AdminPanel() {
                               {bidding.status === "ended" && bidding.highest_bidder_name && (
                                 <>
                                   <button
-                                    className="btn-approve"
+                                    className={`btn-approve ${submittingId === `bid-verify-${bidding.id}` ? 'btn-loading' : ''}`}
                                     onClick={() => handleVerifyPayment(bidding.id)}
                                     style={{
                                       background: "#10b981",
-                                      opacity: bidding.payment_verified ? 0.5 : 1,
-                                      cursor: bidding.payment_verified ? "not-allowed" : "pointer"
+                                      opacity: (bidding.payment_verified || submittingId === `bid-verify-${bidding.id}`) ? 0.5 : 1,
+                                      cursor: (bidding.payment_verified || submittingId === `bid-verify-${bidding.id}`) ? "not-allowed" : "pointer"
                                     }}
-                                    disabled={bidding.payment_verified}
+                                    disabled={bidding.payment_verified || submittingId === `bid-verify-${bidding.id}`}
                                     title={bidding.payment_verified ? "Payment already verified" : "Verify payment"}
                                   >
-                                    {bidding.payment_verified ? "✓ Payment Verified" : "Verify Payment"}
+                                    {submittingId === `bid-verify-${bidding.id}` ? 'Verifying...' : (bidding.payment_verified ? "✓ Payment Verified" : "Verify Payment")}
                                   </button>
                                   <button
-                                    className="btn-approve"
+                                    className={`btn-approve ${submittingId === `bid-deliver-${bidding.id}` ? 'btn-loading' : ''}`}
                                     onClick={() => handleArrangeDelivery(bidding.id)}
                                     style={{
                                       background: bidding.payment_verified ? "#3b82f6" : "#f59e0b",
-                                      opacity: bidding.delivery_arranged ? 0.5 : 1,
-                                      cursor: (!bidding.payment_verified || bidding.delivery_arranged) ? "not-allowed" : "pointer"
+                                      opacity: (bidding.delivery_arranged || !bidding.payment_verified || submittingId === `bid-deliver-${bidding.id}`) ? 0.5 : 1,
+                                      cursor: (!bidding.payment_verified || bidding.delivery_arranged || submittingId === `bid-deliver-${bidding.id}`) ? "not-allowed" : "pointer"
                                     }}
-                                    disabled={!bidding.payment_verified || bidding.delivery_arranged}
+                                    disabled={!bidding.payment_verified || bidding.delivery_arranged || submittingId === `bid-deliver-${bidding.id}`}
                                     title={!bidding.payment_verified ? "Please verify payment first" : bidding.delivery_arranged ? "Delivery already arranged" : "Arrange delivery"}
                                   >
-                                    {bidding.delivery_arranged ? "✓ Delivery Arranged" : "Arrange Delivery"}
+                                    {submittingId === `bid-deliver-${bidding.id}` ? 'Arranging...' : (bidding.delivery_arranged ? "✓ Delivery Arranged" : "Arrange Delivery")}
                                   </button>
                                 </>
                               )}
@@ -2525,7 +2532,7 @@ function AdminPanel() {
                       </button>
                       <button
                         type="submit"
-                        className="bidding-btn-submit"
+                        className={`bidding-btn-submit ${biddingLoading ? 'btn-loading' : ''}`}
                         disabled={biddingLoading}
                       >
                         {biddingLoading ? "Creating..." : "Create Bidding"}
@@ -2659,11 +2666,12 @@ function AdminPanel() {
                     Cancel
                   </button>
                   <button
-                    className="btn-confirm-reject"
+                    className={`btn-confirm-reject ${submittingId ? 'btn-loading' : ''}`}
                     onClick={confirmReject}
-                    disabled={!rejectionReason.trim()}
+                    disabled={!rejectionReason.trim() || !!submittingId}
+                    style={{ position: 'relative' }}
                   >
-                    Confirm Rejection
+                    {submittingId ? 'Processing...' : 'Confirm Rejection'}
                   </button>
                 </div>
               </div>
