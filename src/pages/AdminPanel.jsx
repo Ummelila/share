@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import "../styles/AdminPanel.css";
 import { notifyUser } from "../utils/notifications";
-import { X, RefreshCw, CheckCheck, AlertCircle, ArrowUpDown, Bell } from "lucide-react";
+import { X, RefreshCw, CheckCheck, AlertCircle, ArrowUpDown, Bell, Users, DollarSign, Gift, Package, ShoppingBag, BarChart2, ShieldCheck, LogOut, Heart } from "lucide-react";
 import CustomDropdown from "../components/CustomDropdown";
 import Summary from "../components/Summary";
 
@@ -417,7 +417,7 @@ function AdminPanel() {
         className="btn-view-document"
         onClick={() => handleViewDocument(filePath, fileName)}
       >
-        📄 {label}
+        {label}
       </button>
     );
   };
@@ -1277,118 +1277,141 @@ function AdminPanel() {
   }, []);
 
   return (
-    <div className="admin-panel-container">
-      <div className="admin-header">
-        <div>
-          <h1>Admin Panel</h1>
-          <p>Manage verification requests</p>
+    <div className="admin-layout">
+      {/* Sidebar Navigation */}
+      <aside className="admin-sidebar">
+        <div className="sidebar-header">
+          <div className="sidebar-website-logo">
+            <div className="logo-icon">
+              <Heart size={20} color="#fff" fill="#fff" />
+            </div>
+            <span className="website-name">Share<span>4</span>Good</span>
+          </div>
+          <div className="sidebar-logo">
+            <span>Admin Portal</span>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}>
-          {/* Admin Logout */}
-          <button
-            className="btn-admin-logout"
-            onClick={() => {
-              localStorage.removeItem("adminUser");
-              navigate("/admin");
-            }}
-          >
-            Logout
-          </button>
-        </div>
-      </div>
 
-      {feedback && feedback.type !== "success" && (
-        <div
-          className={`page-alert ${feedback.type === "success"
-              ? "page-alert-success"
-              : "page-alert-error"
-            }`}
-          style={{ maxWidth: "1200px", margin: "0 auto 1rem" }}
-        >
-          <span className="page-alert-emoji">
-            {feedback.type === "success" ? "✅" : "❌"}
-          </span>
-          <span>{feedback.message}</span>
-        </div>
-      )}
-
-      <nav className="admin-navbar">
-        <div className="admin-navbar-container">
+        <nav className="sidebar-nav">
           <button
-            className={`admin-nav-item ${activeTab === "verifications" ? "active" : ""}`}
+            className={`sidebar-nav-item ${activeTab === "verifications" ? "active" : ""}`}
             onClick={() => setActiveTab("verifications")}
           >
-            <span className="nav-item-text">Verification Requests</span>
+            <span className="nav-item-text">Verifications</span>
             <span className="nav-item-badge">{verifications.filter((v) => v.status === "pending").length}</span>
           </button>
+
           <button
-            className={`admin-nav-item ${activeTab === "requests" ? "active" : ""}`}
+            className={`sidebar-nav-item ${activeTab === "requests" ? "active" : ""}`}
             onClick={() => setActiveTab("requests")}
           >
             <span className="nav-item-text">Cash Requests</span>
             <span className="nav-item-badge">{cashRequests.filter((r) => r.status === "pending").length}</span>
           </button>
+
           <button
-            className={`admin-nav-item ${activeTab === "donations" ? "active" : ""}`}
+            className={`sidebar-nav-item ${activeTab === "donations" ? "active" : ""}`}
             onClick={() => setActiveTab("donations")}
           >
             <span className="nav-item-text">Cash Donations</span>
             <span className="nav-item-badge">{cashDonations.filter((d) => d.status === "pending").length}</span>
           </button>
+
           <button
-            className={`admin-nav-item ${activeTab === "product-donations" ? "active" : ""}`}
+            className={`sidebar-nav-item ${activeTab === "product-donations" ? "active" : ""}`}
             onClick={() => setActiveTab("product-donations")}
           >
             <span className="nav-item-text">Product Donations</span>
             <span className="nav-item-badge">{productDonations.filter((d) => d.status === "pending").length}</span>
           </button>
+
           <button
-            className={`admin-nav-item ${activeTab === "product-requests" ? "active" : ""}`}
+            className={`sidebar-nav-item ${activeTab === "product-requests" ? "active" : ""}`}
             onClick={() => setActiveTab("product-requests")}
           >
             <span className="nav-item-text">Product Requests</span>
             <span className="nav-item-badge">{productRequests.filter((r) => r.status === "pending").length}</span>
           </button>
+
           <button
-            className={`admin-nav-item ${activeTab === "bidding" ? "active" : ""}`}
+            className={`sidebar-nav-item ${activeTab === "bidding" ? "active" : ""}`}
             onClick={() => setActiveTab("bidding")}
           >
-            <span className="nav-item-text">Bidding Management</span>
+            <span className="nav-item-text">Bidding</span>
             <span className="nav-item-badge">{biddingProducts.filter((b) => {
               const needsPaymentAction = b.status === "ended" && b.highest_bidder_name && !b.payment_verified;
               const needsDeliveryAction = b.status === "ended" && b.highest_bidder_name && b.payment_verified && !b.delivery_arranged;
               return needsPaymentAction || needsDeliveryAction;
             }).length}</span>
           </button>
+
           <button
-            className={`admin-nav-item ${activeTab === "summary" ? "active" : ""}`}
+            className={`sidebar-nav-item ${activeTab === "summary" ? "active" : ""}`}
             onClick={() => setActiveTab("summary")}
           >
             <span className="nav-item-text">Summary</span>
-            <span className="nav-item-badge">📊</span>
           </button>
+        </nav>
+
+        <div className="sidebar-footer">
+          {/* Empty footer or remove if not needed */}
         </div>
-      </nav>
+      </aside>
 
-      {activeTab === "summary" && (
-        <Summary
-          verifications={verifications}
-          cashRequests={cashRequests}
-          cashDonations={cashDonations}
-          productDonations={productDonations}
-          productRequests={productRequests}
-          biddingProducts={biddingProducts}
-        />
-      )}
-
-      <div className="admin-content">
-        {loading ? (
-          <div className="loading-state">
-            <div className="spinner"></div>
-            <p>Loading...</p>
+      {/* Main Content Area */}
+      <main className="admin-main">
+        <header className="main-header">
+          <div className="header-info">
+            <h1>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('-', ' ')}</h1>
           </div>
-        ) : (
-          <>
+          <div className="header-actions">
+            <button
+              className="btn-header-logout"
+              onClick={() => {
+                localStorage.removeItem("adminUser");
+                navigate("/admin");
+              }}
+            >
+              <LogOut size={18} />
+              <span>Logout</span>
+            </button>
+          </div>
+        </header>
+
+        <div className="main-content">
+          {feedback && feedback.type !== "success" && (
+            <div
+              className={`page-alert ${feedback.type === "success"
+                ? "page-alert-success"
+                : "page-alert-error"
+                }`}
+            >
+              <span className="page-alert-emoji">
+                {feedback.type === "success" ? "✅" : "❌"}
+              </span>
+              <span>{feedback.message}</span>
+            </div>
+          )}
+
+          {activeTab === "summary" && (
+            <Summary
+              verifications={verifications}
+              cashRequests={cashRequests}
+              cashDonations={cashDonations}
+              productDonations={productDonations}
+              productRequests={productRequests}
+              biddingProducts={biddingProducts}
+            />
+          )}
+
+          <div className="admin-content-inner">
+            {loading ? (
+              <div className="loading-state">
+                <div className="spinner"></div>
+                <p>Loading...</p>
+              </div>
+            ) : (
+              <>
             {activeTab === "verifications" && (
               <div className="requests-section">
                 {/* Search and Filter */}
@@ -2268,27 +2291,7 @@ function AdminPanel() {
                             key={bidding.id}
                             data-bidding-id={bidding.id}
                             className="verification-card"
-                            style={{
-                              border: needsAction ? "3px solid #f59e0b" : undefined,
-                              background: needsAction ? "#fef3c7" : undefined,
-                              boxShadow: needsAction ? "0 4px 12px rgba(245, 158, 11, 0.3)" : undefined
-                            }}
-                          >
-                            {needsAction && (
-                              <div style={{
-                                background: needsPaymentAction ? "#f59e0b" : "#3b82f6",
-                                color: "white",
-                                padding: "0.5rem",
-                                marginBottom: "1rem",
-                                borderRadius: "4px",
-                                fontWeight: "bold",
-                                textAlign: "center"
-                              }}>
-                                ⚠️ Action Required: {needsPaymentAction ? "Verify Payment" : "Arrange Delivery"}
-                              </div>
-                            )}
-
-                            {/* Product Image */}
+                          >                            {/* Product Image */}
                             {bidding.product_image_url && (
                               <BiddingProductImage
                                 imageUrl={bidding.product_image_url}
@@ -2297,23 +2300,10 @@ function AdminPanel() {
                             )}
 
                             <div className="request-header">
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                                <div>
-                                  <h3 style={{ margin: 0, marginBottom: '0.25rem' }}>{bidding.product_name || "Unnamed Product"}</h3>
-                                  <p style={{
-                                    margin: 0,
-                                    fontSize: '0.75rem',
-                                    color: '#6b7280',
-                                    fontFamily: 'monospace',
-                                    fontWeight: 'bold'
-                                  }}>
-                                    📦 Product ID: {bidding.product_donation_id || 'N/A'} | Bid ID: {bidding.id}
-                                  </p>
-                                </div>
-                                <span className={`status-badge ${needsAction ? 'action-required' : bidding.status}`}>
-                                  {needsAction ? '⚠️ Action Required' : bidding.status}
-                                </span>
-                              </div>
+                              <h3 style={{ margin: 0 }}>{bidding.product_name || "Unnamed Product"}</h3>
+                              <span className={`status-badge ${needsAction || bidding.status === 'pending' ? 'pending' : bidding.status}`}>
+                                {needsAction ? 'Pending' : (bidding.status === 'pending' ? 'Pending' : bidding.status)}
+                              </span>
                             </div>
                             <div className="request-details">
                               <p><strong>Category:</strong> {bidding.product_category || 'N/A'}</p>
@@ -2333,42 +2323,49 @@ function AdminPanel() {
                                 </p>
                               )}
                               <p><strong>Starting Price:</strong> PKR {parseFloat(bidding.starting_price).toLocaleString()}</p>
-                              <p><strong>Current Highest Bid:</strong> PKR {parseFloat(bidding.current_highest_bid || bidding.starting_price).toLocaleString()}</p>
-                              {bidding.highest_bidder_name && (
-                                <p><strong>Highest Bidder:</strong> {bidding.highest_bidder_name}</p>
+                              {bidding.status !== "ended" && (
+                                <p><strong>{bidding.status === "completed" ? "Highest Bid" : "Current Highest Bid"}:</strong> PKR {parseFloat(bidding.current_highest_bid || bidding.starting_price).toLocaleString()}</p>
+                              )}
+                              {bidding.status !== "ended" && bidding.highest_bidder_name && (
+                                <p><strong>{bidding.status === "completed" ? "Winner" : "Highest Bidder"}:</strong> {bidding.highest_bidder_name}</p>
                               )}
                               <p><strong>Start Date:</strong> {new Date(bidding.bid_start_date).toLocaleDateString()}</p>
                               <p><strong>End Date:</strong> {new Date(bidding.bid_end_date).toLocaleDateString()}</p>
-                              {bidding.status === "ended" && (bidding.winner_name || bidding.highest_bidder_name) && (
+                              {bidding.status === "ended" && (
                                 <>
-                                  <p><strong>Winner:</strong> {bidding.winner_name || bidding.highest_bidder_name}</p>
-                                  <p><strong>Winning Bid:</strong> PKR {parseFloat(bidding.current_highest_bid || bidding.starting_price).toLocaleString()}</p>
-                                  <p>
-                                    <strong>Payment:</strong>{" "}
-                                    <span className={`status-badge ${bidding.payment_verified ? "approved" : "pending"}`}>
-                                      {bidding.payment_verified ? "✅ Verified" : "⏳ Pending"}
-                                    </span>
-                                  </p>
-                                  <p>
-                                    <strong>Delivery:</strong>{" "}
-                                    <span className={`status-badge ${bidding.delivery_arranged ? "approved" : "pending"}`}>
-                                      {bidding.delivery_arranged ? "✅ Arranged" : "⏳ Pending"}
-                                    </span>
-                                  </p>
+                                  <p><strong>Winner:</strong> {bidding.winner_name || bidding.highest_bidder_name || "No bids received"}</p>
+                                  <p><strong>Winning Bid:</strong> {bidding.highest_bidder_name ? `PKR ${parseFloat(bidding.current_highest_bid || bidding.starting_price).toLocaleString()}` : "N/A"}</p>
+                                  {bidding.highest_bidder_name && (
+                                    <>
+                                      <p>
+                                        <strong>Payment:</strong>{" "}
+                                        <span className={`status-badge ${bidding.payment_verified ? "approved" : "pending"}`}>
+                                          {bidding.payment_verified ? "✅ Verified" : "Pending"}
+                                        </span>
+                                      </p>
+                                      <p>
+                                        <strong>Delivery:</strong>{" "}
+                                        <span className={`status-badge ${bidding.delivery_arranged ? "approved" : "pending"}`}>
+                                          {bidding.delivery_arranged ? "✅ Arranged" : "Pending"}
+                                        </span>
+                                      </p>
+                                    </>
+                                  )}
                                 </>
                               )}
                             </div>
                             <div className="action-buttons" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
                               <button
-                                className="btn-approve"
+                                className="btn-bidding-action"
+                                style={{ background: "#1e293b" }}
                                 onClick={() => openBidsModal(bidding)}
                               >
-                                View Bids ({bidding.current_highest_bid > bidding.starting_price ? "Has Bids" : "No Bids"})
+                                View {bidding.current_highest_bid > bidding.starting_price ? "Bids" : "(No Bids)"}
                               </button>
                               {bidding.status === "ended" && bidding.highest_bidder_name && (
                                 <>
                                   <button
-                                    className={`btn-approve ${submittingId === `bid-verify-${bidding.id}` ? 'btn-loading' : ''}`}
+                                    className={`btn-bidding-action ${submittingId === `bid-verify-${bidding.id}` ? 'btn-loading' : ''}`}
                                     onClick={() => handleVerifyPayment(bidding.id)}
                                     style={{
                                       background: "#10b981",
@@ -2378,10 +2375,10 @@ function AdminPanel() {
                                     disabled={bidding.payment_verified || submittingId === `bid-verify-${bidding.id}`}
                                     title={bidding.payment_verified ? "Payment already verified" : "Verify payment"}
                                   >
-                                    {submittingId === `bid-verify-${bidding.id}` ? 'Verifying...' : (bidding.payment_verified ? "✓ Payment Verified" : "Verify Payment")}
+                                    {submittingId === `bid-verify-${bidding.id}` ? 'Verifying...' : (bidding.payment_verified ? "Payment Done" : "Payment")}
                                   </button>
                                   <button
-                                    className={`btn-approve ${submittingId === `bid-deliver-${bidding.id}` ? 'btn-loading' : ''}`}
+                                    className={`btn-bidding-action ${submittingId === `bid-deliver-${bidding.id}` ? 'btn-loading' : ''}`}
                                     onClick={() => handleArrangeDelivery(bidding.id)}
                                     style={{
                                       background: bidding.payment_verified ? "#3b82f6" : "#f59e0b",
@@ -2391,7 +2388,7 @@ function AdminPanel() {
                                     disabled={!bidding.payment_verified || bidding.delivery_arranged || submittingId === `bid-deliver-${bidding.id}`}
                                     title={!bidding.payment_verified ? "Please verify payment first" : bidding.delivery_arranged ? "Delivery already arranged" : "Arrange delivery"}
                                   >
-                                    {submittingId === `bid-deliver-${bidding.id}` ? 'Arranging...' : (bidding.delivery_arranged ? "✓ Delivery Arranged" : "Arrange Delivery")}
+                                    {submittingId === `bid-deliver-${bidding.id}` ? 'Arranging...' : (bidding.delivery_arranged ? "Delivery Done" : "Delivery")}
                                   </button>
                                 </>
                               )}
@@ -2751,8 +2748,10 @@ function AdminPanel() {
               </div>
             </div>
           </div>
-        )}
-      </div>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

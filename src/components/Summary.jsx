@@ -11,7 +11,7 @@ function Summary({
   return (
     <div className="stats-container">
       <div className="stat-card">
-        <h3>📋 Verifications</h3>
+        <h3>Verifications</h3>
         <p className="stat-number">{verifications.length}</p>
         <div className="stat-breakdown">
           <span className="stat-pending">
@@ -30,7 +30,7 @@ function Summary({
       </div>
 
       <div className="stat-card">
-        <h3>💵 Cash Requests</h3>
+        <h3>Cash Requests</h3>
         <p className="stat-number">{cashRequests.length}</p>
         <div className="stat-breakdown">
           <span className="stat-pending">
@@ -56,7 +56,7 @@ function Summary({
       </div>
 
       <div className="stat-card">
-        <h3>💰 Cash Donations</h3>
+        <h3>Cash Donations</h3>
         <p className="stat-number">{cashDonations.length}</p>
         <div className="stat-breakdown">
           <span className="stat-pending">
@@ -82,7 +82,7 @@ function Summary({
       </div>
 
       <div className="stat-card">
-        <h3>🎁 Product Donations</h3>
+        <h3>Product Donations</h3>
         <p className="stat-number">{productDonations.length}</p>
         <div className="stat-breakdown">
           <span className="stat-pending">
@@ -101,7 +101,7 @@ function Summary({
       </div>
 
       <div className="stat-card">
-        <h3>📦 Product Requests</h3>
+        <h3>Product Requests</h3>
         <p className="stat-number">{productRequests.length}</p>
         <div className="stat-breakdown">
           <span className="stat-pending">
@@ -120,7 +120,7 @@ function Summary({
       </div>
 
       <div className="stat-card">
-        <h3>🔨 Bidding Products</h3>
+        <h3>Bidding Products</h3>
         <p className="stat-number">{biddingProducts.length}</p>
         <div className="stat-breakdown">
           <span className="stat-pending">
