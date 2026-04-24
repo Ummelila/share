@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
     Menu,
     X,
-    Heart,
+    HandHeart,
     ChevronDown,
     User,
     LogIn
@@ -31,9 +31,7 @@ const Navbar = () => {
                 <div className="flex justify-between items-center h-20">
                     {/* Logo */}
                     <Link to="/" className="flex items-center space-x-3 group">
-                        <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center shadow-md ring-1 ring-primary-700/20 group-hover:shadow-lg transition-all duration-300">
-                            <Heart className="w-6 h-6 text-white" fill="white" />
-                        </div>
+                        <img src="/logo.png" alt="Share4Good Logo" className="w-12 h-12 object-contain group-hover:scale-105 transition-all duration-300" />
                         <div className="flex flex-col">
                             <span className="text-xl font-bold font-poppins text-gray-900 leading-none">
                                 Share<span className="text-primary-500">4</span>Good
@@ -48,8 +46,8 @@ const Navbar = () => {
                                 key={link.path}
                                 to={link.path}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(link.path)
-                                        ? 'bg-primary-50 text-primary-600'
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-primary-600'
+                                    ? 'bg-primary-50 text-primary-600'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-primary-600'
                                     }`}
                             >
                                 {link.name}
@@ -97,8 +95,8 @@ const Navbar = () => {
                             to={link.path}
                             onClick={() => setIsOpen(false)}
                             className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${isActive(link.path)
-                                    ? 'bg-primary-50 text-primary-600'
-                                    : 'text-gray-600 hover:bg-gray-50'
+                                ? 'bg-primary-50 text-primary-600'
+                                : 'text-gray-600 hover:bg-gray-50'
                                 }`}
                         >
                             {link.name}

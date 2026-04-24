@@ -46,7 +46,7 @@ const HowItWorks = () => {
             <section className="relative py-6 bg-gradient-to-br from-primary-50 via-white to-secondary-50 overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary-200 rounded-full blur-3xl opacity-20 -mr-32 -mt-32"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-200 rounded-full blur-3xl opacity-20 -ml-32 -mb-32"></div>
-                
+
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="flex items-start mb-4">
                         <button
@@ -56,7 +56,7 @@ const HowItWorks = () => {
                         >
                             <ArrowLeft className="w-5 h-5 text-gray-600 group-hover:text-primary-600" />
                         </button>
-                        
+
                         <div className="text-center max-w-3xl mx-auto flex-1">
                             <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-700 px-4 py-1.5 rounded-full text-xs font-semibold mb-3 shadow-sm">
                                 <HelpCircle className="w-3 h-3" />

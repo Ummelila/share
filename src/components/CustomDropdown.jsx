@@ -38,30 +38,30 @@ function CustomDropdown({ options, value, onChange, placeholder = "Select..." })
       {/* Custom Dropdown Trigger */}
       <button
         type="button"
-        className={`w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl flex items-center justify-between text-sm font-medium text-gray-700 hover:border-primary-300 hover:bg-gray-50 transition-all duration-200 ${isOpen ? 'ring-2 ring-primary-100 border-primary-400' : ''}`}
+        className={`w-full px-4 py-3 bg-slate-50/70 backdrop-blur-sm border border-slate-200/80 rounded-2xl flex items-center justify-between text-[0.95rem] font-medium text-slate-700 hover:border-blue-400 hover:bg-white hover:shadow-md transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] ${isOpen ? 'ring-4 ring-blue-500/15 border-blue-500 bg-white shadow-lg translate-y-[-1px]' : ''}`}
         onClick={toggleDropdown}
       >
         <span className="truncate">{selectedLabel}</span>
-        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-300 ${isOpen ? 'rotate-180 text-blue-500' : ''}`} />
       </button>
       
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute left-0 right-0 mt-2 bg-white rounded-xl shadow-card border border-gray-200 py-2 z-[100] animate-slide-up">
+        <div className="absolute left-0 right-0 mt-3 bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] border border-slate-200/80 py-2 z-[100] animate-slide-up overflow-hidden">
           <div className="max-h-60 overflow-y-auto custom-scrollbar">
             {options.map((option, index) => (
               <button
                 key={option.value || index}
                 type="button"
-                className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center justify-between ${
+                className={`w-full text-left px-4 py-2.5 text-[0.9rem] font-medium transition-all duration-200 flex items-center justify-between ${
                   value === option.value 
-                    ? 'bg-primary-50 text-primary-700 font-semibold' 
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'bg-blue-50/80 text-blue-700 relative before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-500' 
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`}
                 onClick={() => handleSelect(option)}
               >
                 {option.label}
-                {value === option.value && <Check className="w-4 h-4" />}
+                {value === option.value && <Check className="w-4 h-4 text-blue-600" />}
               </button>
             ))}
           </div>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import "../styles/AdminPanel.css";
 import { notifyUser } from "../utils/notifications";
-import { X, RefreshCw, CheckCheck, AlertCircle, ArrowUpDown, Bell, Users, DollarSign, Gift, Package, ShoppingBag, BarChart2, ShieldCheck, LogOut, Heart } from "lucide-react";
+import { X, RefreshCw, CheckCheck, AlertCircle, ArrowUpDown, Bell, Users, DollarSign, Gift, Package, ShoppingBag, BarChart2, ShieldCheck, LogOut, HandHeart } from "lucide-react";
 import CustomDropdown from "../components/CustomDropdown";
 import Summary from "../components/Summary";
 
@@ -1283,7 +1283,7 @@ function AdminPanel() {
         <div className="sidebar-header">
           <div className="sidebar-website-logo">
             <div className="logo-icon">
-              <Heart size={20} color="#fff" fill="#fff" />
+              <HandHeart size={20} className="text-white" />
             </div>
             <span className="website-name">Share<span>4</span>Good</span>
           </div>
@@ -1416,10 +1416,11 @@ function AdminPanel() {
               <div className="requests-section">
                 {/* Search and Filter */}
                 <div className="admin-search-filter">
+                  <h3 className="admin-search-filter-title">Search & Filters</h3>
                   <div className="admin-search-box">
                     <input
                       type="text"
-                      placeholder="Search by name, email, or ID..."
+                      placeholder="Search by name or email..."
                       value={verificationSearch}
                       onChange={(e) => setVerificationSearch(e.target.value)}
                       className="admin-search-input"
@@ -1560,10 +1561,11 @@ function AdminPanel() {
               <div className="requests-section">
                 {/* Search and Filter */}
                 <div className="admin-search-filter">
+                  <h3 className="admin-search-filter-title">Search & Filters</h3>
                   <div className="admin-search-box">
                     <input
                       type="text"
-                      placeholder="Search by name, email, amount, or ID..."
+                      placeholder="Search by name, email, or amount..."
                       value={cashRequestSearch}
                       onChange={(e) => setCashRequestSearch(e.target.value)}
                       className="admin-search-input"
@@ -1778,10 +1780,11 @@ function AdminPanel() {
               <div className="requests-section">
                 {/* Search and Filter */}
                 <div className="admin-search-filter">
+                  <h3 className="admin-search-filter-title">Search & Filters</h3>
                   <div className="admin-search-box">
                     <input
                       type="text"
-                      placeholder="Search by name, product, category, or ID..."
+                      placeholder="Search by name, product, or category..."
                       value={productRequestSearch}
                       onChange={(e) => setProductRequestSearch(e.target.value)}
                       className="admin-search-input"
@@ -1929,10 +1932,11 @@ function AdminPanel() {
               <div className="donations-section">
                 {/* Search and Filter */}
                 <div className="admin-search-filter">
+                  <h3 className="admin-search-filter-title">Search & Filters</h3>
                   <div className="admin-search-box">
                     <input
                       type="text"
-                      placeholder="Search by name, email, amount, or ID..."
+                      placeholder="Search by name, email, or amount..."
                       value={cashDonationSearch}
                       onChange={(e) => setCashDonationSearch(e.target.value)}
                       className="admin-search-input"
@@ -1943,7 +1947,7 @@ function AdminPanel() {
                         className="admin-clear-search"
                         onClick={() => setCashDonationSearch("")}
                       >
-                        ✕
+                        ×
                       </button>
                     )}
                   </div>
@@ -1960,12 +1964,26 @@ function AdminPanel() {
                       onChange={setCashDonationStatusFilter}
                     />
                   </div>
-                  {(cashDonationSearch || cashDonationStatusFilter !== "all") && (
+                  <div className="admin-filter-group">
+                    <label>Sort By</label>
+                    <CustomDropdown
+                      options={[
+                        { value: "newest", label: "Newest First" },
+                        { value: "oldest", label: "Oldest First" },
+                        { value: "name-asc", label: "Name (A-Z)" },
+                        { value: "name-desc", label: "Name (Z-A)" }
+                      ]}
+                      value={cashDonationSortBy}
+                      onChange={setCashDonationSortBy}
+                    />
+                  </div>
+                  {(cashDonationSearch || cashDonationStatusFilter !== "all" || cashDonationSortBy !== "newest") && (
                     <button
                       className="admin-clear-filters"
                       onClick={() => {
                         setCashDonationSearch("");
                         setCashDonationStatusFilter("all");
+                        setCashDonationSortBy("newest");
                       }}
                     >
                       Clear
@@ -1987,14 +2005,15 @@ function AdminPanel() {
                     }
                     return true;
                   });
-                  return filtered.length === 0 ? (
+                  const sorted = sortItems(filtered, cashDonationSortBy);
+                  return sorted.length === 0 ? (
                     <div className="empty-state">
                       {cashDonations.length === 0
                         ? "No cash donations"
                         : "No donations match your filters"}
                     </div>
                   ) : (
-                    filtered.map((donation) => (
+                    sorted.map((donation) => (
                       <div key={donation.id} className="verification-card">
                         <div className="request-header">
                           <h3>{donation.user_name}</h3>
@@ -2057,11 +2076,91 @@ function AdminPanel() {
 
             {activeTab === "product-donations" && (
               <div className="donations-section">
-                {productDonations.length === 0 ? (
-                  <div className="empty-state">No product donations</div>
-                ) : (
-                  productDonations.map((donation) => (
-                    <div key={donation.id} className="verification-card">
+                {/* Search and Filter */}
+                <div className="admin-search-filter">
+                  <h3 className="admin-search-filter-title">Search & Filters</h3>
+                  <div className="admin-search-box">
+                    <input
+                      type="text"
+                      placeholder="Search by name, email, or product..."
+                      value={productDonationSearch}
+                      onChange={(e) => setProductDonationSearch(e.target.value)}
+                      className="admin-search-input"
+                    />
+                    <i className="ri-search-line admin-search-icon"></i>
+                    {productDonationSearch && (
+                      <button
+                        className="admin-clear-search"
+                        onClick={() => setProductDonationSearch("")}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                  <div className="admin-filter-group">
+                    <label>Status</label>
+                    <CustomDropdown
+                      options={[
+                        { value: "all", label: "All Status" },
+                        { value: "pending", label: "Pending" },
+                        { value: "approved", label: "Approved" },
+                        { value: "rejected", label: "Rejected" }
+                      ]}
+                      value={productDonationStatusFilter}
+                      onChange={setProductDonationStatusFilter}
+                    />
+                  </div>
+                  <div className="admin-filter-group">
+                    <label>Sort By</label>
+                    <CustomDropdown
+                      options={[
+                        { value: "newest", label: "Newest First" },
+                        { value: "oldest", label: "Oldest First" },
+                        { value: "name-asc", label: "Name (A-Z)" },
+                        { value: "name-desc", label: "Name (Z-A)" }
+                      ]}
+                      value={productDonationSortBy}
+                      onChange={setProductDonationSortBy}
+                    />
+                  </div>
+                  {(productDonationSearch || productDonationStatusFilter !== "all" || productDonationSortBy !== "newest") && (
+                    <button
+                      className="admin-clear-filters"
+                      onClick={() => {
+                        setProductDonationSearch("");
+                        setProductDonationStatusFilter("all");
+                        setProductDonationSortBy("newest");
+                      }}
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+                {(() => {
+                  const filtered = productDonations.filter((d) => {
+                    if (productDonationStatusFilter !== "all" && d.status !== productDonationStatusFilter) return false;
+                    if (productDonationSearch.trim()) {
+                      const search = productDonationSearch.toLowerCase();
+                      return (
+                        (d.user_name && d.user_name.toLowerCase().includes(search)) ||
+                        (d.user_email && d.user_email.toLowerCase().includes(search)) ||
+                        (d.product_name && d.product_name.toLowerCase().includes(search)) ||
+                        (d.category && d.category.toLowerCase().includes(search)) ||
+                        (d.id && d.id.toString().includes(search))
+                      );
+                    }
+                    return true;
+                  });
+                  const sorted = sortItems(filtered, productDonationSortBy);
+                  return sorted.length === 0 ? (
+                    <div className="empty-state">
+                      {productDonations.length === 0
+                        ? "No product donations"
+                        : "No donations match your filters"}
+                    </div>
+                  ) : (
+                    sorted.map((donation) => (
+                      <div key={donation.id} className="verification-card">
                       <div className="request-header">
                         <h3>{donation.user_name}</h3>
                         <span className={`status-badge ${donation.status}`}>
@@ -2117,8 +2216,8 @@ function AdminPanel() {
                         </div>
                       )}
                     </div>
-                  ))
-                )}
+                  )))
+                })()}
               </div>
             )}
 
@@ -2140,10 +2239,11 @@ function AdminPanel() {
 
                 {/* Search and Filter */}
                 <div className="admin-search-filter" style={{ marginBottom: "1.5rem" }}>
+                  <h3 className="admin-search-filter-title">Search & Filters</h3>
                   <div className="admin-search-box">
                     <input
                       type="text"
-                      placeholder="Search by product name, category, or bidder..."
+                      placeholder="Search by name, category, or bidder..."
                       value={biddingSearch}
                       onChange={(e) => setBiddingSearch(e.target.value)}
                       className="admin-search-input"
@@ -2354,10 +2454,10 @@ function AdminPanel() {
                                 </>
                               )}
                             </div>
-                            <div className="action-buttons" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
+                            <div className="action-buttons" style={{ display: 'flex', flexWrap: 'nowrap', gap: '0.5rem', marginTop: '1rem', overflowX: 'auto' }}>
                               <button
                                 className="btn-bidding-action"
-                                style={{ background: "#1e293b" }}
+                                style={{ background: "#1e293b", whiteSpace: 'nowrap' }}
                                 onClick={() => openBidsModal(bidding)}
                               >
                                 View {bidding.current_highest_bid > bidding.starting_price ? "Bids" : "(No Bids)"}
@@ -2370,12 +2470,13 @@ function AdminPanel() {
                                     style={{
                                       background: "#10b981",
                                       opacity: (bidding.payment_verified || submittingId === `bid-verify-${bidding.id}`) ? 0.5 : 1,
-                                      cursor: (bidding.payment_verified || submittingId === `bid-verify-${bidding.id}`) ? "not-allowed" : "pointer"
+                                      cursor: (bidding.payment_verified || submittingId === `bid-verify-${bidding.id}`) ? "not-allowed" : "pointer",
+                                      whiteSpace: 'nowrap'
                                     }}
                                     disabled={bidding.payment_verified || submittingId === `bid-verify-${bidding.id}`}
                                     title={bidding.payment_verified ? "Payment already verified" : "Verify payment"}
                                   >
-                                    {submittingId === `bid-verify-${bidding.id}` ? 'Verifying...' : (bidding.payment_verified ? "Payment Done" : "Payment")}
+                                    {submittingId === `bid-verify-${bidding.id}` ? 'Verifying...' : (bidding.payment_verified ? "Payment Done" : "Payment Done")}
                                   </button>
                                   <button
                                     className={`btn-bidding-action ${submittingId === `bid-deliver-${bidding.id}` ? 'btn-loading' : ''}`}
@@ -2383,12 +2484,13 @@ function AdminPanel() {
                                     style={{
                                       background: bidding.payment_verified ? "#3b82f6" : "#f59e0b",
                                       opacity: (bidding.delivery_arranged || !bidding.payment_verified || submittingId === `bid-deliver-${bidding.id}`) ? 0.5 : 1,
-                                      cursor: (!bidding.payment_verified || bidding.delivery_arranged || submittingId === `bid-deliver-${bidding.id}`) ? "not-allowed" : "pointer"
+                                      cursor: (!bidding.payment_verified || bidding.delivery_arranged || submittingId === `bid-deliver-${bidding.id}`) ? "not-allowed" : "pointer",
+                                      whiteSpace: 'nowrap'
                                     }}
                                     disabled={!bidding.payment_verified || bidding.delivery_arranged || submittingId === `bid-deliver-${bidding.id}`}
                                     title={!bidding.payment_verified ? "Please verify payment first" : bidding.delivery_arranged ? "Delivery already arranged" : "Arrange delivery"}
                                   >
-                                    {submittingId === `bid-deliver-${bidding.id}` ? 'Arranging...' : (bidding.delivery_arranged ? "Delivery Done" : "Delivery")}
+                                    {submittingId === `bid-deliver-${bidding.id}` ? 'Arranging...' : (bidding.delivery_arranged ? "Delivery Done" : "Delivery Done")}
                                   </button>
                                 </>
                               )}

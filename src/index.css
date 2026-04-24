@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Poppins:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -13,15 +12,15 @@
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Roboto', sans-serif;
   background-color: #f9fafb;
   color: #1f2937;
   line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
   line-height: 1.3;
 }
 
@@ -116,7 +115,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .section-title {
-    @apply text-3xl md:text-4xl font-bold text-gray-800 font-montserrat;
+    @apply text-3xl md:text-4xl font-bold text-gray-800 font-roboto;
   }
 
   .section-subtitle {

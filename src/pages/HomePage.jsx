@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
     Heart,
     HeartHandshake,
+    HandHeart,
     Package,
     Gavel,
     Users,
@@ -67,16 +68,16 @@ const HomePage = () => {
 
             // Calculate total cash donated
             const totalCashDonated = (cashDonationsRes.data || []).reduce((sum, d) => sum + Number(d.amount || 0), 0);
-            
+
             // Count products shared
             const productsShared = (productDonationsRes.data || []).length;
-            
+
             // Count total users
             const totalUsers = (usersRes.data || []).length;
-            
+
             // Count lives touched (approved requests)
             const livesTouched = (approvedRequestsRes.data || []).length;
-            
+
             // Count active donors (users who have made approved donations)
             const { data: activeDonorsData } = await supabase
                 .from('cash_donations')
@@ -151,7 +152,7 @@ const HomePage = () => {
         { step: 1, title: 'Sign Up', description: 'Create your account as a donor or recipient', icon: Users },
         { step: 2, title: 'Get Verified', description: 'Recipients upload documents for verification', icon: Shield },
         { step: 3, title: 'Donate or Request', description: 'Donors give, recipients request help', icon: Gift },
-        { step: 4, title: 'Transform Lives', description: 'Your generosity creates lasting impact', icon: Heart },
+        { step: 4, title: 'Transform Lives', description: 'Your generosity creates lasting impact', icon: HandHeart },
     ];
 
     const testimonials = [
@@ -184,7 +185,7 @@ const HomePage = () => {
             {/* Hero Section */}
             <section className="relative overflow-hidden min-h-[600px] flex items-center">
                 {/* Background Image & Overlay */}
-                <div 
+                <div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: "url('https://images.unsplash.com/photo-1593113598332-cd288d649433?w=1600&q=80')" }}
                 ></div>
@@ -196,32 +197,32 @@ const HomePage = () => {
                     <div className="max-w-3xl">
                         {/* Badge */}
                         <div className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full border border-white/20 text-sm font-medium mb-6 backdrop-blur-md">
-                            <Heart className="w-4 h-4 text-[#1db5f4]" fill="currentColor" />
+                            <HandHeart className="w-4 h-4 text-[#1db5f4]" />
                             <span>Making a difference together</span>
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 font-montserrat tracking-tight">
+                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 font-roboto tracking-tight">
                             Share4Good
                         </h1>
 
                         {/* Subtitle */}
-                        <p className="text-lg md:text-xl text-white/90 max-w-2xl mb-10 leading-relaxed font-open-sans">
-                            Connect with your community. Donate products, contribute cash, 
+                        <p className="text-lg md:text-xl text-white/90 max-w-2xl mb-10 leading-relaxed font-roboto">
+                            Connect with your community. Donate products, contribute cash,
                             or bid on items to support those in need.
                         </p>
 
                         {/* Custom Buttons */}
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <Link 
-                                to="/signup" 
+                            <Link
+                                to="/signup"
                                 className="bg-[#1db5f4] text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-[#159bd4] transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-cyan-500/25"
                             >
                                 Get Started
                                 <ArrowRight className="w-5 h-5" />
                             </Link>
-                            <Link 
-                                to="/how-it-works" 
+                            <Link
+                                to="/how-it-works"
                                 className="border border-white/30 bg-white/10 backdrop-blur-sm text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-white/20 transition-all flex items-center justify-center shadow-lg"
                             >
                                 Learn More
@@ -262,7 +263,7 @@ const HomePage = () => {
                                 <div className="w-14 h-14 mx-auto bg-primary-100 rounded-xl flex items-center justify-center mb-4">
                                     <stat.icon className="w-7 h-7 text-primary-600" />
                                 </div>
-                                <div className="text-3xl font-bold text-gray-900 font-poppins">{stat.value}</div>
+                                <div className="text-3xl font-bold text-gray-900 font-roboto">{stat.value}</div>
                                 <div className="text-gray-500 mt-1">{stat.label}</div>
                             </div>
                         ))}
@@ -300,7 +301,7 @@ const HomePage = () => {
                                 <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
                                     <feature.icon className="w-7 h-7 text-white" />
                                 </div>
-                                <h3 className="text-xl font-semibold text-gray-800 mb-3 font-poppins">
+                                <h3 className="text-xl font-semibold text-gray-800 mb-3 font-roboto">
                                     {feature.title}
                                 </h3>
                                 <p className="text-gray-600 leading-relaxed">
@@ -334,7 +335,7 @@ const HomePage = () => {
                                             {item.step}
                                         </div>
                                     </div>
-                                    <h3 className="text-xl font-semibold text-gray-800 mt-6 mb-2 font-poppins">
+                                    <h3 className="text-xl font-semibold text-gray-800 mt-6 mb-2 font-roboto">
                                         {item.title}
                                     </h3>
                                     <p className="text-gray-600">{item.description}</p>
@@ -440,7 +441,7 @@ const HomePage = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-800/88 to-primary-700/85" />
                 <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white font-poppins mb-6">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white font-roboto mb-6">
                         Ready to Make a Difference?
                     </h2>
                     <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
@@ -452,7 +453,7 @@ const HomePage = () => {
                             to="/signup"
                             className="bg-white text-primary-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                         >
-                            <Heart className="w-5 h-5" />
+                            <HandHeart className="w-5 h-5" />
                             Donate Now
                         </Link>
                         <Link

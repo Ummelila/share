@@ -1,12 +1,12 @@
 import React from 'react';
 
-function Summary({ 
-  verifications, 
-  cashRequests, 
-  cashDonations, 
-  productDonations, 
-  productRequests, 
-  biddingProducts 
+function Summary({
+  verifications,
+  cashRequests,
+  cashDonations,
+  productDonations,
+  productRequests,
+  biddingProducts
 }) {
   return (
     <div className="stats-container">

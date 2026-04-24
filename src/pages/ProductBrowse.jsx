@@ -286,7 +286,7 @@ function ProductBrowse() {
       setFeedback({ type: "success", message: "Product request submitted successfully! Admin will review it soon." });
       closeRequestModal();
       closeProductDetail();
-      
+
       setTimeout(() => {
         navigate("/dashboard");
       }, 2000);
@@ -305,13 +305,12 @@ function ProductBrowse() {
       <div className="product-browse-container">
         {feedback && (
           <div
-            className={`page-alert ${
-              feedback.type === "success"
+            className={`page-alert ${feedback.type === "success"
                 ? "page-alert-success"
                 : feedback.type === "warning"
-                ? "page-alert-warning"
-                : "page-alert-error"
-            }`}
+                  ? "page-alert-warning"
+                  : "page-alert-error"
+              }`}
             style={{ maxWidth: "1200px", margin: "0 auto 1rem" }}
           >
             <span className="page-alert-emoji">
@@ -321,287 +320,287 @@ function ProductBrowse() {
           </div>
         )}
 
-      <div className="product-browse-header">
-        <h1>Browse Available Products</h1>
-        <p className="browse-subtitle">
-          Find products donated by generous donors
-        </p>
-      </div>
-
-      {/* Enhanced Search and Filter Section */}
-      <div className="search-filter-section">
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="Search by name, description, category, or donor..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-          <i className="ri-search-line search-icon"></i>
-          {searchTerm && (
-            <button
-              className="clear-search-btn"
-              onClick={() => setSearchTerm("")}
-              title="Clear search"
-            >
-              ✕
-            </button>
-          )}
-        </div>
-
-        <div className="filters-row">
-          <div className="filter-group">
-            <label>Category</label>
-            <CustomDropdown
-              options={categories.map(cat => ({ value: cat === "All" ? "all" : cat, label: cat }))}
-              value={selectedCategory}
-              onChange={setSelectedCategory}
-              placeholder="Select Category"
-            />
-          </div>
-
-          <div className="filter-group">
-            <label>Date</label>
-            <CustomDropdown
-              options={[
-                { value: "all", label: "All Time" },
-                { value: "today", label: "Today" },
-                { value: "week", label: "This Week" },
-                { value: "month", label: "This Month" }
-              ]}
-              value={dateFilter}
-              onChange={setDateFilter}
-              placeholder="Select Date"
-            />
-          </div>
-
-          <div className="filter-group">
-            <label>Sort By</label>
-            <CustomDropdown
-              options={[
-                { value: "newest", label: "Newest First" },
-                { value: "oldest", label: "Oldest First" },
-                { value: "name-asc", label: "Name (A-Z)" },
-                { value: "name-desc", label: "Name (Z-A)" }
-              ]}
-              value={sortBy}
-              onChange={setSortBy}
-              placeholder="Sort By"
-            />
-          </div>
-
-          {(searchTerm || selectedCategory !== "all" || dateFilter !== "all") && (
-            <button
-              className="clear-filters-btn"
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedCategory("all");
-                setDateFilter("all");
-                setSortBy("newest");
-              }}
-            >
-              Clear All
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Results Count */}
-      <div className="results-info">
-        <p>
-          Showing <strong>{filteredProducts.length}</strong> of{" "}
-          <strong>{products.length}</strong> products
-        </p>
-      </div>
-
-      {error && (
-        <div style={{ maxWidth: "1200px", margin: "0 auto 1rem" }}>
-          <ErrorMessage
-            message={error}
-            onRetry={() => {
-              setError(null);
-              loadProducts();
-            }}
-            dismissible={true}
-            onDismiss={() => setError(null)}
-          />
-        </div>
-      )}
-
-      {/* Products Grid */}
-      {loading ? (
-        products.length === 0 ? (
-          <LoadingSpinner size="large" message="Loading products..." />
-        ) : (
-          <SkeletonLoader type="card" count={6} />
-        )
-      ) : filteredProducts.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">📦</div>
-          <h3>No products found</h3>
-          <p>
-            {searchTerm || selectedCategory !== "all"
-              ? "Try adjusting your search or filter criteria"
-              : "No products available at the moment"}
+        <div className="product-browse-header">
+          <h1>Browse Available Products</h1>
+          <p className="browse-subtitle">
+            Find products donated by generous donors
           </p>
         </div>
-      ) : (
-        <div className="products-grid">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="product-card">
-              <div className="product-image-container">
-                {product.image_url ? (
-                  <ProductImageThumbnail filePath={product.image_url} />
-                ) : (
-                  <div className="product-image-placeholder">📦</div>
-                )}
-              </div>
-              <div className="product-info">
-                <div className="product-category-badge">{product.category}</div>
-                <h3 className="product-name">
-                  {product.product_name || "Unnamed Product"}
-                </h3>
-                <p className="product-description">
-                  {product.description
-                    ? product.description.length > 100
-                      ? product.description.substring(0, 100) + "..."
-                      : product.description
-                    : "No description available"}
-                </p>
-                <div className="product-footer">
-                  <span className="product-date">
-                    {new Date(product.created_at).toLocaleDateString()}
-                  </span>
-                  <button
-                    className="btn-view-product"
-                    onClick={() => handleViewProduct(product)}
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
-      {/* Product Detail Modal */}
-      {selectedProduct && (
-        <div
-          className="product-modal-overlay"
-          onClick={closeProductDetail}
-        >
-          <div
-            className="product-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="product-modal-header">
-              <h2>Product Details</h2>
-              <button className="btn-close-modal" onClick={closeProductDetail}>
+        {/* Enhanced Search and Filter Section */}
+        <div className="search-filter-section">
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Search by name, description, category, or donor..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+            <i className="ri-search-line search-icon"></i>
+            {searchTerm && (
+              <button
+                className="clear-search-btn"
+                onClick={() => setSearchTerm("")}
+                title="Clear search"
+              >
                 ✕
               </button>
+            )}
+          </div>
+
+          <div className="filters-row">
+            <div className="filter-group">
+              <label>Category</label>
+              <CustomDropdown
+                options={categories.map(cat => ({ value: cat === "All" ? "all" : cat, label: cat }))}
+                value={selectedCategory}
+                onChange={setSelectedCategory}
+                placeholder="Select Category"
+              />
             </div>
-            <div className="product-modal-content">
-              {productImageUrl && (
-                <div className="product-modal-image">
-                  <img src={productImageUrl} alt={selectedProduct.product_name} />
+
+            <div className="filter-group">
+              <label>Date</label>
+              <CustomDropdown
+                options={[
+                  { value: "all", label: "All Time" },
+                  { value: "today", label: "Today" },
+                  { value: "week", label: "This Week" },
+                  { value: "month", label: "This Month" }
+                ]}
+                value={dateFilter}
+                onChange={setDateFilter}
+                placeholder="Select Date"
+              />
+            </div>
+
+            <div className="filter-group">
+              <label>Sort By</label>
+              <CustomDropdown
+                options={[
+                  { value: "newest", label: "Newest First" },
+                  { value: "oldest", label: "Oldest First" },
+                  { value: "name-asc", label: "Name (A-Z)" },
+                  { value: "name-desc", label: "Name (Z-A)" }
+                ]}
+                value={sortBy}
+                onChange={setSortBy}
+                placeholder="Sort By"
+              />
+            </div>
+
+            {(searchTerm || selectedCategory !== "all" || dateFilter !== "all") && (
+              <button
+                className="clear-filters-btn"
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("all");
+                  setDateFilter("all");
+                  setSortBy("newest");
+                }}
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="results-info">
+          <p>
+            Showing <strong>{filteredProducts.length}</strong> of{" "}
+            <strong>{products.length}</strong> products
+          </p>
+        </div>
+
+        {error && (
+          <div style={{ maxWidth: "1200px", margin: "0 auto 1rem" }}>
+            <ErrorMessage
+              message={error}
+              onRetry={() => {
+                setError(null);
+                loadProducts();
+              }}
+              dismissible={true}
+              onDismiss={() => setError(null)}
+            />
+          </div>
+        )}
+
+        {/* Products Grid */}
+        {loading ? (
+          products.length === 0 ? (
+            <LoadingSpinner size="large" message="Loading products..." />
+          ) : (
+            <SkeletonLoader type="card" count={6} />
+          )
+        ) : filteredProducts.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-icon">📦</div>
+            <h3>No products found</h3>
+            <p>
+              {searchTerm || selectedCategory !== "all"
+                ? "Try adjusting your search or filter criteria"
+                : "No products available at the moment"}
+            </p>
+          </div>
+        ) : (
+          <div className="products-grid">
+            {filteredProducts.map((product) => (
+              <div key={product.id} className="product-card">
+                <div className="product-image-container">
+                  {product.image_url ? (
+                    <ProductImageThumbnail filePath={product.image_url} />
+                  ) : (
+                    <div className="product-image-placeholder">📦</div>
+                  )}
                 </div>
-              )}
-              <div className="product-modal-info">
-                <div className="product-modal-category">
-                  {selectedProduct.category}
-                </div>
-                <h3>{selectedProduct.product_name || "Unnamed Product"}</h3>
-                <div className="product-modal-section">
-                  <strong>Description:</strong>
-                  <p>{selectedProduct.description || "No description available"}</p>
-                </div>
-                <div className="product-modal-section">
-                  <strong>Donated by:</strong>
-                  <p>{selectedProduct.user_name}</p>
-                </div>
-                <div className="product-modal-section">
-                  <strong>Date:</strong>
-                  <p>
-                    {new Date(selectedProduct.created_at).toLocaleDateString()}
+                <div className="product-info">
+                  <div className="product-category-badge">{product.category}</div>
+                  <h3 className="product-name">
+                    {product.product_name || "Unnamed Product"}
+                  </h3>
+                  <p className="product-description">
+                    {product.description
+                      ? product.description.length > 100
+                        ? product.description.substring(0, 100) + "..."
+                        : product.description
+                      : "No description available"}
                   </p>
+                  <div className="product-footer">
+                    <span className="product-date">
+                      {new Date(product.created_at).toLocaleDateString()}
+                    </span>
+                    <button
+                      className="btn-view-product"
+                      onClick={() => handleViewProduct(product)}
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Product Detail Modal */}
+        {selectedProduct && (
+          <div
+            className="product-modal-overlay"
+            onClick={closeProductDetail}
+          >
+            <div
+              className="product-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="product-modal-header">
+                <h2>Product Details</h2>
+                <button className="btn-close-modal" onClick={closeProductDetail}>
+                  ✕
+                </button>
+              </div>
+              <div className="product-modal-content">
+                {productImageUrl && (
+                  <div className="product-modal-image">
+                    <img src={productImageUrl} alt={selectedProduct.product_name} />
+                  </div>
+                )}
+                <div className="product-modal-info">
+                  <div className="product-modal-category">
+                    {selectedProduct.category}
+                  </div>
+                  <h3>{selectedProduct.product_name || "Unnamed Product"}</h3>
+                  <div className="product-modal-section">
+                    <strong>Description:</strong>
+                    <p>{selectedProduct.description || "No description available"}</p>
+                  </div>
+                  <div className="product-modal-section">
+                    <strong>Donated by:</strong>
+                    <p>{selectedProduct.user_name}</p>
+                  </div>
+                  <div className="product-modal-section">
+                    <strong>Date:</strong>
+                    <p>
+                      {new Date(selectedProduct.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="product-modal-actions">
+                    <button
+                      className="btn-request-product"
+                      onClick={() => handleRequestProduct(selectedProduct)}
+                    >
+                      Request This Product
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Product Request Modal */}
+        {showRequestModal && requestingProduct && (
+          <div
+            className="product-modal-overlay"
+            onClick={closeRequestModal}
+          >
+            <div
+              className="product-modal"
+              onClick={(e) => e.stopPropagation()}
+              style={{ maxWidth: "600px" }}
+            >
+              <div className="product-modal-header">
+                <h2>Request Product</h2>
+                <button className="btn-close-modal" onClick={closeRequestModal}>
+                  ✕
+                </button>
+              </div>
+              <div className="product-modal-content">
+                <div className="product-modal-section">
+                  <strong>Product:</strong>
+                  <p>{requestingProduct.product_name || "Unnamed Product"}</p>
+                </div>
+                <div className="product-modal-section">
+                  <strong>Category:</strong>
+                  <p>{requestingProduct.category}</p>
+                </div>
+                <div className="product-modal-section">
+                  <label htmlFor="request-reason">
+                    <strong>Reason for Request *</strong>
+                  </label>
+                  <textarea
+                    id="request-reason"
+                    value={requestReason}
+                    onChange={(e) => setRequestReason(e.target.value)}
+                    placeholder="Please explain why you need this product..."
+                    rows="5"
+                    className="request-reason-textarea"
+                    required
+                  />
+                  <small>This information will help the admin review your request.</small>
                 </div>
                 <div className="product-modal-actions">
                   <button
-                    className="btn-request-product"
-                    onClick={() => handleRequestProduct(selectedProduct)}
+                    className="btn-cancel"
+                    onClick={closeRequestModal}
+                    disabled={requestLoading}
                   >
-                    Request This Product
+                    Cancel
+                  </button>
+                  <button
+                    className={`btn-request-product ${requestLoading ? 'btn-loading' : ''}`}
+                    onClick={submitProductRequest}
+                    disabled={requestLoading || !requestReason.trim()}
+                  >
+                    {requestLoading ? "Submitting..." : "Submit Request"}
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Product Request Modal */}
-      {showRequestModal && requestingProduct && (
-        <div
-          className="product-modal-overlay"
-          onClick={closeRequestModal}
-        >
-          <div
-            className="product-modal"
-            onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: "600px" }}
-          >
-            <div className="product-modal-header">
-              <h2>Request Product</h2>
-              <button className="btn-close-modal" onClick={closeRequestModal}>
-                ✕
-              </button>
-            </div>
-            <div className="product-modal-content">
-              <div className="product-modal-section">
-                <strong>Product:</strong>
-                <p>{requestingProduct.product_name || "Unnamed Product"}</p>
-              </div>
-              <div className="product-modal-section">
-                <strong>Category:</strong>
-                <p>{requestingProduct.category}</p>
-              </div>
-              <div className="product-modal-section">
-                <label htmlFor="request-reason">
-                  <strong>Reason for Request *</strong>
-                </label>
-                <textarea
-                  id="request-reason"
-                  value={requestReason}
-                  onChange={(e) => setRequestReason(e.target.value)}
-                  placeholder="Please explain why you need this product..."
-                  rows="5"
-                  className="request-reason-textarea"
-                  required
-                />
-                <small>This information will help the admin review your request.</small>
-              </div>
-              <div className="product-modal-actions">
-                <button
-                  className="btn-cancel"
-                  onClick={closeRequestModal}
-                  disabled={requestLoading}
-                >
-                  Cancel
-                </button>
-                <button
-                  className={`btn-request-product ${requestLoading ? 'btn-loading' : ''}`}
-                  onClick={submitProductRequest}
-                  disabled={requestLoading || !requestReason.trim()}
-                >
-                  {requestLoading ? "Submitting..." : "Submit Request"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+        )}
       </div>
     </>
   );

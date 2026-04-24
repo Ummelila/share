@@ -129,7 +129,7 @@ function AuthenticatedNavbar() {
   const handleBankDetailsSubmit = async (bankDetails) => {
     try {
       console.log("=== BANK DETAILS SUBMISSION START ===");
-      
+
       const insertData = {
         user_id: currentUser.id,
         user_name: currentUser.name,
@@ -253,7 +253,7 @@ function AuthenticatedNavbar() {
 
   const quickActionLinks = [
     { name: "Request Now", path: "/request-donation", icon: HandHeart },
-    { name: "Donate Now", path: "/donate", icon: Gift },
+    { name: "Donate Now", path: "/donate", icon: Heart },
     { name: "Browse Product", path: "/browse", icon: Package },
     { name: "View Bidding", path: "/bidding-gallery", icon: Gavel },
   ];
@@ -282,9 +282,7 @@ function AuthenticatedNavbar() {
         <div className="p-5 border-b border-gray-100 bg-primary-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-primary-600 flex items-center justify-center shadow-sm ring-1 ring-primary-700/20">
-                <Heart className="w-5 h-5 text-white" fill="white" />
-              </div>
+              <img src="/logo.png" alt="Share4Good Logo" className="w-10 h-10 object-contain" />
               <div>
                 <h3 className="text-lg font-bold font-poppins text-gray-900">
                   Share<span className="text-primary-500">4</span>Good
@@ -330,10 +328,10 @@ function AuthenticatedNavbar() {
               {/* Sidebar Menu Button */}
               <button
                 onClick={() => setSideMenuOpen(true)}
-                className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary-50 text-primary-600 hover:bg-primary-100 hover:text-primary-700 border border-primary-100 transition-all duration-200 flex items-center justify-center shrink-0"
+                className="w-10 h-10 lg:w-12 lg:h-12 rounded-full text-gray-600 hover:bg-gray-50 hover:text-[#124074] transition-all duration-300 flex items-center justify-center shrink-0 group hover:shadow-sm"
                 title="Quick Actions"
               >
-                <Menu className="w-5 h-5 lg:w-6 lg:h-6" />
+                <Menu className="w-5 h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform duration-300" strokeWidth={2.5} />
               </button>
 
               {/* Logo */}
@@ -341,9 +339,7 @@ function AuthenticatedNavbar() {
                 onClick={() => navigate("/dashboard")}
                 className="flex items-center space-x-3 group cursor-pointer"
               >
-                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary-600 flex items-center justify-center shadow-md ring-1 ring-primary-700/20 group-hover:shadow-lg transition-all duration-300">
-                  <Heart className="w-5 h-5 lg:w-6 lg:h-6 text-white" fill="white" />
-                </div>
+                <img src="/logo.png" alt="Share4Good Logo" className="w-10 h-10 lg:w-12 lg:h-12 object-contain group-hover:scale-105 transition-all duration-300" />
                 <div className="flex flex-col">
                   <span className="text-lg lg:text-xl font-bold font-poppins text-gray-900 leading-none">
                     Share<span className="text-primary-500">4</span>Good
@@ -636,14 +632,13 @@ function AuthenticatedNavbar() {
                           }
                         }}
                         className={`p-4 transition-colors ${isPaymentSubmitted
-                            ? 'bg-gray-100 cursor-not-allowed opacity-60 pointer-events-none'
-                            : 'hover:bg-gray-50 cursor-pointer'
+                          ? 'bg-gray-100 cursor-not-allowed opacity-60 pointer-events-none'
+                          : 'hover:bg-gray-50 cursor-pointer'
                           } ${isUnread && !isPaymentSubmitted ? 'bg-primary-50/30' : ''
                           } ${isRejected ? 'border-l-4 border-red-500' : ''} ${isPositive ? 'border-l-4 border-green-500' : ''} ${isBankDetailsRequest ? 'border-l-4 border-blue-500' : ''}`}
                       >
                         <div className="flex gap-3">
-                          <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
-                              isBankDetailsRequest ? 'bg-blue-100 text-blue-600' :
+                          <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${isBankDetailsRequest ? 'bg-blue-100 text-blue-600' :
                               isPositive ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
                             }`}>
                             {isBankDetailsRequest ? (

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { DollarSign, Package, ArrowRight, HeartHandshake } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import AuthenticatedNavbar from "../components/AuthenticatedNavbar";
 
 function RequestForm() {
@@ -10,99 +10,92 @@ function RequestForm() {
     if (type === "cash") {
       navigate("/cash-request");
     } else if (type === "product") {
-      navigate("/browse");
+      navigate("/browse-products");
     }
   };
 
+  const processSteps = [
+    { title: "Select Type", desc: "Select the type of assistance you need" },
+    { title: "Fill Form", desc: "Fill the application form" },
+    { title: "Under Review", desc: "Submit and wait for admin review" },
+    { title: "Get Notified", desc: "Get notified once the admin approves or updates the status" },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 animate-fade-in">
+    <div className="h-screen bg-white text-slate-900 flex flex-col font-poppins overflow-hidden">
       <AuthenticatedNavbar />
 
-      {/* Hero Section */}
-      <section className="py-6 bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold font-poppins text-gray-900 mb-2">
-            Request Donation
-          </h1>
-          <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-            Choose the type of assistance you need. We're here to help you get back on your feet.
-          </p>
-        </div>
-      </section>
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Left Panel: How It Works */}
+        <aside className="w-[480px] bg-slate-50 border-r border-slate-200 p-16 flex flex-col justify-center animate-fade-in shrink-0">
+          <div className="mb-14">
+            <h2 className="text-4xl font-black tracking-tighter text-slate-900 leading-none">How It <span className="text-slate-300">Works</span></h2>
+          </div>
 
-      {/* Selection Cards */}
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Cash Request Card */}
-            <div
-              onClick={() => handleTypeSelect("cash")}
-              className="card cursor-pointer hover:border-primary-500 transition-colors"
-            >
-              <div className="w-16 h-16 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
-                <DollarSign className="w-8 h-8 text-primary-600" />
+          <div className="space-y-12">
+            {processSteps.map((step, index) => (
+              <div key={index} className="flex gap-8 group">
+                <div className="relative shrink-0">
+                  <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center font-black text-slate-400 group-hover:bg-[#124074] group-hover:text-white group-hover:border-[#124074] transition-all duration-500 shadow-sm group-hover:shadow-blue-900/10 text-xl">
+                    {index + 1}
+                  </div>
+                  {index < processSteps.length - 1 && (
+                    <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[1px] h-12 bg-gradient-to-b from-slate-200 to-transparent"></div>
+                  )}
+                </div>
+                <div>
+                  <h4 className="text-lg font-black uppercase tracking-widest text-slate-500 group-hover:text-[#124074] transition-colors">{step.title}</h4>
+                  <p className="text-base text-slate-400 font-medium leading-relaxed mt-3 group-hover:text-slate-600 transition-colors max-w-[280px]">
+                    {step.desc}
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold font-poppins text-gray-900 mb-3">
-                Cash Request
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Request financial assistance for medical bills, education, rent, or other essential needs.
-              </p>
-              <div className="flex items-center text-primary-600 font-semibold">
-                <span>Request Cash</span>
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </div>
-            </div>
+            ))}
+          </div>
+        </aside>
 
-            {/* Product Request Card */}
-            <div
-              onClick={() => handleTypeSelect("product")}
-              className="card cursor-pointer hover:border-primary-500 transition-colors"
-            >
-              <div className="w-16 h-16 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
-                <Package className="w-8 h-8 text-primary-600" />
+        {/* Right Panel: Options */}
+        <main className="flex-1 relative flex flex-col justify-center p-20 overflow-hidden bg-slate-50/30">
+          <div className="relative z-10 w-full max-w-6xl animate-slide-up text-left">
+            <h1 className="text-5xl md:text-7xl font-medium mb-8 tracking-tighter leading-[1.1] text-[#124074]">
+              Assistance <br/>
+              <span className="text-[#124074] font-black">Required</span>
+            </h1>
+
+            <div className="grid md:grid-cols-2 gap-12">
+              {/* Cash Request Card */}
+              <div
+                onClick={() => handleTypeSelect("cash")}
+                className="group relative bg-[#2A6F97] rounded-[3.5rem] p-12 transition-all duration-700 hover:scale-[1.03] hover:-translate-y-4 cursor-pointer text-left shadow-[0_30px_60px_rgba(42,111,151,0.25)] hover:shadow-[0_50px_100px_rgba(42,111,151,0.35)]"
+              >
+                <h3 className="text-4xl font-black mb-6 tracking-tight text-white">Cash Request</h3>
+                <p className="text-lg text-white/80 font-medium leading-relaxed tracking-tight mb-14">
+                  Reliable and accessible social support services for medical emergencies, educational fees, and essential bills.
+                </p>
+                <div className="flex items-center gap-3 text-xl font-black uppercase tracking-[0.2em] text-white transition-colors">
+                  <span>Request Cash</span>
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                </div>
               </div>
-              <h3 className="text-xl font-bold font-poppins text-gray-900 mb-3">
-                Product Request
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Browse available products and request items like clothes, books, electronics, and more.
-              </p>
-              <div className="flex items-center text-primary-600 font-semibold">
-                <span>Browse Products</span>
-                <ArrowRight className="w-5 h-5 ml-2" />
+
+              {/* Product Request Card */}
+              <div
+                onClick={() => handleTypeSelect("product")}
+                className="group relative bg-[#2A6F97] rounded-[3.5rem] p-12 transition-all duration-700 hover:scale-[1.03] hover:-translate-y-4 cursor-pointer text-left shadow-[0_30px_60px_rgba(42,111,151,0.25)] hover:shadow-[0_50px_100px_rgba(42,111,151,0.35)]"
+              >
+                <h3 className="text-4xl font-black mb-6 tracking-tight text-white">Product Request</h3>
+                <p className="text-lg text-white/80 font-medium leading-relaxed tracking-tight mb-14">
+                  Discover donated items including clothing and household essentials, available to support your daily needs.
+                </p>
+                <div className="flex items-center gap-3 text-xl font-black uppercase tracking-[0.2em] text-white transition-colors">
+                  <span>Request Product</span>
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Info Section */}
-          <div className="mt-16 max-w-3xl mx-auto">
-            <div className="card bg-gray-50 border border-gray-200 p-6">
-              <h4 className="text-lg font-semibold font-poppins text-gray-900 mb-3">
-                How It Works
-              </h4>
-              <ul className="space-y-2 text-gray-700">
-                <li className="flex items-start gap-2">
-                  <span className="text-primary-600 font-bold">1.</span>
-                  <span>Select the type of assistance you need (Cash or Product)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary-600 font-bold">2.</span>
-                  <span>Fill out the request form with necessary details</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary-600 font-bold">3.</span>
-                  <span>Wait for admin approval (usually 2-3 business days)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary-600 font-bold">4.</span>
-                  <span>Receive assistance once your request is approved</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+        </main>
+      </div>
     </div>
   );
 }

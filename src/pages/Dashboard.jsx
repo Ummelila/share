@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   HeartHandshake,
+  HandHeart,
   Heart,
   Package,
   Gavel,
@@ -76,10 +77,10 @@ function Dashboard() {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tab = searchParams.get('tab');
-    
+
     if (tab === 'donations' || tab === 'requests' || tab === 'stats') {
       setHistoryTab(tab);
-      
+
       // Scroll to history section after a short delay to ensure DOM is updated
       setTimeout(() => {
         const historySection = document.getElementById('history-section');
@@ -500,150 +501,183 @@ function Dashboard() {
         />
         <div className="absolute inset-0 bg-primary-900/40" />
         <div className="absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-800/60 to-transparent" />
-        
-        <div className="relative w-full max-w-[1500px] mx-auto px-3 sm:px-5 lg:px-8 py-10 sm:py-16 z-10">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full border border-white/20 text-sm font-medium mb-6 backdrop-blur-md">
-                <Heart className="w-4 h-4 text-[#1db5f4]" fill="currentColor" />
-                <span>Making a difference together</span>
-              </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-montserrat tracking-tight text-white mb-6 drop-shadow-sm">
-                Share4Good
-              </h1>
-              
-              <p className="text-lg text-white/90 max-w-xl mb-10 leading-relaxed font-open-sans">
-                Connect with your community. Donate products, contribute cash, 
-                or bid on items to support those in need.
-              </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button 
-                  onClick={handleDonateClick}
-                  className="bg-[#1db5f4] text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-[#159bd4] transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-cyan-500/25"
-                >
-                  Get Started
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-                <button 
-                  onClick={() => navigate("/how-it-works")}
-                  className="border border-white/30 bg-white/10 backdrop-blur-sm text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-white/20 transition-all flex items-center justify-center shadow-lg"
-                >
-                  Learn More
-                </button>
-              </div>
+        <div className="relative w-full max-w-[1500px] mx-auto px-3 sm:px-5 lg:px-8 py-10 sm:py-16 z-10">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full border border-white/20 text-sm font-medium mb-6 backdrop-blur-md">
+              <Heart className="w-4 h-4 text-[#1db5f4]" fill="currentColor" />
+              <span>Making a difference together</span>
             </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-roboto tracking-tight text-white mb-6 drop-shadow-sm">
+              Share4Good
+            </h1>
+
+            <p className="text-lg text-white/90 max-w-xl mb-10 leading-relaxed font-roboto">
+              Connect with your community. Donate products, contribute cash,
+              or bid on items to support those in need.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={handleDonateClick}
+                className="bg-[#1db5f4] text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-[#159bd4] transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-cyan-500/25"
+              >
+                Get Started
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => navigate("/how-it-works")}
+                className="border border-white/30 bg-white/10 backdrop-blur-sm text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-white/20 transition-all flex items-center justify-center shadow-lg"
+              >
+                Learn More
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
       <div className="w-full max-w-[1500px] mx-auto px-3 sm:px-5 lg:px-8 pb-8">
         {/* Action Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 px-2">
           {/* Request Donation Card */}
-          <div className="card-hover group flex flex-col">
-            <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center mb-4">
-              <CheckCircle className="w-7 h-7 text-primary-600" />
+          <div className="group relative bg-white rounded-[2rem] p-6 transition-all duration-500 hover:-translate-y-2 border border-blue-50/50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+            <div className="relative mb-3">
+              <HandHeart className="w-10 h-10 text-[#124074] stroke-[1.2] transition-all duration-500 group-hover:scale-110" />
             </div>
-            <h3 className="text-xl font-bold font-poppins text-gray-900 mb-2">Request Donation</h3>
-            <p className="text-gray-600 mb-4">Need help? Submit a request for cash or products</p>
-            <div className="mt-auto">
-              <button
-                onClick={handleRequestClick}
-                className="w-full btn-primary"
-              >
+
+            <div className="relative flex-grow">
+              <h3 className="text-2xl font-bold font-roboto text-[#124074] mb-3 tracking-tight">Need Help?</h3>
+              <p className="text-[#124074]/60 leading-relaxed font-medium mb-5">
+                Submit a request for assistance or essential products smoothly and securely.
+              </p>
+            </div>
+
+            <button
+              onClick={() => navigate("/request-donation")}
+              className="group relative py-2 mt-auto flex w-max items-center justify-start gap-3"
+            >
+              <span className="font-bold text-xl text-[#124074] transition-transform duration-300 group-hover:translate-x-1">
                 Request Now
-              </button>
-            </div>
+              </span>
+              <ArrowRight className="w-5 h-5 text-[#124074] transition-transform duration-300 group-hover:translate-x-2" />
+            </button>
           </div>
 
           {/* Make Donation Card */}
-          <div className="card-hover group flex flex-col">
-            <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center mb-4">
-              <Heart className="w-7 h-7 text-primary-600" fill="currentColor" />
+          <div className="group relative bg-white rounded-[2rem] p-6 transition-all duration-500 hover:-translate-y-2 border border-blue-50/50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+            <div className="relative mb-3">
+              <Heart className="w-10 h-10 text-[#124074] stroke-[1.2] transition-all duration-500 group-hover:scale-110" />
             </div>
-            <h3 className="text-xl font-bold font-poppins text-gray-900 mb-2">Make a Donation</h3>
-            <p className="text-gray-600 mb-4">Help someone in need with cash or products</p>
-            <div className="mt-auto">
-              <button
-                onClick={handleDonateClick}
-                className="w-full btn-primary"
-              >
+
+            <div className="relative flex-grow">
+              <h3 className="text-2xl font-bold font-roboto text-[#124074] mb-3 tracking-tight">Support Now</h3>
+              <p className="text-[#124074]/60 leading-relaxed font-medium mb-5">
+                Make an impact by donating cash or sharing products with people who need them.
+              </p>
+            </div>
+
+            <button
+              onClick={() => navigate("/donate")}
+              className="group relative py-2 mt-auto flex w-max items-center justify-start gap-3"
+            >
+              <span className="font-bold text-xl text-[#124074] transition-transform duration-300 group-hover:translate-x-1">
                 Donate Now
-              </button>
-            </div>
+              </span>
+              <ArrowRight className="w-5 h-5 text-[#124074] transition-transform duration-300 group-hover:translate-x-2" />
+            </button>
           </div>
 
           {/* Browse Products Card */}
-          <div className="card-hover group flex flex-col">
-            <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center mb-4">
-              <Package className="w-7 h-7 text-primary-600" />
+          <div className="group relative bg-white rounded-[2rem] p-6 transition-all duration-500 hover:-translate-y-2 border border-blue-50/50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+            <div className="relative mb-3">
+              <Package className="w-10 h-10 text-[#124074] stroke-[1.2] transition-all duration-500 group-hover:scale-110" />
             </div>
-            <h3 className="text-xl font-bold font-poppins text-gray-900 mb-2">Browse Products</h3>
-            <p className="text-gray-600 mb-4">View available products you can request</p>
-            <div className="mt-auto">
-              <button
-                onClick={() => navigate("/browse")}
-                className="w-full btn-primary"
-              >
-                Browse Products
-              </button>
+
+            <div className="relative flex-grow">
+              <h3 className="text-2xl font-bold font-roboto text-[#124074] mb-3 tracking-tight">Explore Items</h3>
+              <p className="text-[#124074]/60 leading-relaxed font-medium mb-5">
+                Browse through available products and request the ones that could help you.
+              </p>
             </div>
+
+            <button
+              onClick={() => navigate("/browse")}
+              className="group relative py-2 mt-auto flex w-max items-center justify-start gap-3"
+            >
+              <span className="font-bold text-xl text-[#124074] transition-transform duration-300 group-hover:translate-x-1">
+                Browse Items
+              </span>
+              <ArrowRight className="w-5 h-5 text-[#124074] transition-transform duration-300 group-hover:translate-x-2" />
+            </button>
           </div>
 
           {/* Live Bidding Card */}
-          <div className="card-hover group flex flex-col">
-            <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center mb-4">
-              <Gavel className="w-7 h-7 text-primary-600" />
+          <div className="group relative bg-white rounded-[2rem] p-6 transition-all duration-500 hover:-translate-y-2 border border-blue-50/50 shadow-xl shadow-blue-900/5 overflow-hidden flex flex-col h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+            <div className="relative mb-3">
+              <Gavel className="w-10 h-10 text-[#124074] stroke-[1.2] transition-all duration-500 group-hover:scale-110" />
             </div>
-            <h3 className="text-xl font-bold font-poppins text-gray-900 mb-2">Live Bidding</h3>
-            <p className="text-gray-600 mb-4">Bid on unique products and support a good cause</p>
-            <div className="mt-auto">
-              <button
-                onClick={() => navigate("/bidding-gallery")}
-                className="w-full btn-primary"
-              >
+
+            <div className="relative flex-grow">
+              <h3 className="text-2xl font-bold font-roboto text-[#124074] mb-3 tracking-tight">Live Auctions</h3>
+              <p className="text-[#124074]/60 leading-relaxed font-medium mb-5">
+                Participate in real-time bidding for unique items and support charitable causes.
+              </p>
+            </div>
+
+            <button
+              onClick={() => navigate("/bidding-gallery")}
+              className="group relative py-2 mt-auto flex w-max items-center justify-start gap-3"
+            >
+              <span className="font-bold text-xl text-[#124074] transition-transform duration-300 group-hover:translate-x-1">
                 View Bidding
-              </button>
-            </div>
+              </span>
+              <ArrowRight className="w-5 h-5 text-[#124074] transition-transform duration-300 group-hover:translate-x-2" />
+            </button>
           </div>
         </div>
 
         {/* History & Statistics Section */}
         <div id="history-section" className="card bg-white">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-            <h2 className="text-2xl font-bold font-montserrat text-gray-900">Your History & Statistics</h2>
+            <h2 className="text-2xl font-bold font-roboto text-gray-900">Your History & Statistics</h2>
           </div>
 
           <div className="flex gap-8 border-b border-gray-200">
             <button
               onClick={() => setHistoryTab("stats")}
-              className={`pb-4 px-2 flex items-center gap-2 text-base font-medium transition-colors border-b-2 -mb-px ${
-                historyTab === "stats"
+              className={`pb-4 px-2 flex items-center gap-2 text-base font-medium transition-colors border-b-2 -mb-px ${historyTab === "stats"
                   ? "text-[#1db5f4] border-[#1db5f4]"
                   : "text-slate-600 border-transparent hover:text-slate-900 hover:border-gray-300"
-              }`}
+                }`}
             >
               <TrendingUp className="w-5 h-5" />
               Statistics
             </button>
             <button
               onClick={() => setHistoryTab("donations")}
-              className={`pb-4 px-2 flex items-center gap-2 text-base font-medium transition-colors border-b-2 -mb-px ${
-                historyTab === "donations"
+              className={`pb-4 px-2 flex items-center gap-2 text-base font-medium transition-colors border-b-2 -mb-px ${historyTab === "donations"
                   ? "text-[#1db5f4] border-[#1db5f4]"
                   : "text-slate-600 border-transparent hover:text-slate-900 hover:border-gray-300"
-              }`}
+                }`}
             >
               <Heart className="w-5 h-5" />
               Donations ({donationHistory.length})
             </button>
             <button
               onClick={() => setHistoryTab("requests")}
-              className={`pb-4 px-2 flex items-center gap-2 text-base font-medium transition-colors border-b-2 -mb-px ${
-                historyTab === "requests"
+              className={`pb-4 px-2 flex items-center gap-2 text-base font-medium transition-colors border-b-2 -mb-px ${historyTab === "requests"
                   ? "text-[#1db5f4] border-[#1db5f4]"
                   : "text-slate-600 border-transparent hover:text-slate-900 hover:border-gray-300"
-              }`}
+                }`}
             >
               <Package className="w-5 h-5" />
               Requests ({requestHistory.length})
@@ -850,15 +884,14 @@ function Dashboard() {
                         </button>
                       )}
                     </div>
-                    
+
                     {/* Filter Toggle Button */}
                     <button
                       onClick={() => setShowDonationFilters(!showDonationFilters)}
-                      className={`flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold transition-all w-full md:w-auto shrink-0 shadow-sm ${
-                        showDonationFilters || donationFilter !== "all" || donationStatusFilter !== "all"
+                      className={`flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold transition-all w-full md:w-auto shrink-0 shadow-sm ${showDonationFilters || donationFilter !== "all" || donationStatusFilter !== "all"
                           ? "bg-primary-50 text-primary-700 border border-primary-200 hover:bg-primary-100"
                           : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300"
-                      }`}
+                        }`}
                     >
                       <Filter className="w-5 h-5" />
                       Filters
@@ -904,7 +937,7 @@ function Dashboard() {
                         />
                       </div>
                     </div>
-                    
+
                     {(donationSearch || donationFilter !== "all" || donationStatusFilter !== "all") && (
                       <div className="flex justify-end mt-5 pt-4 border-t border-gray-50">
                         <button
@@ -1023,15 +1056,14 @@ function Dashboard() {
                         </button>
                       )}
                     </div>
-                    
+
                     {/* Filter Toggle Button */}
                     <button
                       onClick={() => setShowRequestFilters(!showRequestFilters)}
-                      className={`flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold transition-all w-full md:w-auto shrink-0 shadow-sm ${
-                        showRequestFilters || requestFilter !== "all" || requestStatusFilter !== "all"
+                      className={`flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold transition-all w-full md:w-auto shrink-0 shadow-sm ${showRequestFilters || requestFilter !== "all" || requestStatusFilter !== "all"
                           ? "bg-primary-50 text-primary-700 border border-primary-200 hover:bg-primary-100"
                           : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300"
-                      }`}
+                        }`}
                     >
                       <Filter className="w-5 h-5" />
                       Filters
@@ -1077,7 +1109,7 @@ function Dashboard() {
                         />
                       </div>
                     </div>
-                    
+
                     {(requestSearch || requestFilter !== "all" || requestStatusFilter !== "all") && (
                       <div className="flex justify-end mt-5 pt-4 border-t border-gray-50">
                         <button
@@ -1170,7 +1202,7 @@ function Dashboard() {
           </div>
         </div>
 
-        
+
       </div>
     </div>
   );

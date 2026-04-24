@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import {
-    Heart,
+    HandHeart,
     Mail,
     Phone,
     MapPin,
@@ -59,9 +59,7 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div className="lg:col-span-1">
                         <Link to="/" className="flex items-center space-x-3 mb-6">
-                            <div className="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center ring-1 ring-primary-500/40 shadow-md">
-                                <Heart className="w-6 h-6 text-white" fill="white" />
-                            </div>
+                            <img src="/logo.png" alt="Share4Good Logo" className="w-12 h-12 object-contain" />
                             <div className="flex flex-col">
                                 <span className="text-xl font-bold font-poppins text-white leading-none">
                                     Share<span className="text-primary-400">4</span>Good

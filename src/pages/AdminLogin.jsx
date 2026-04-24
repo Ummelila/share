@@ -21,7 +21,7 @@ function AdminLogin() {
       const from = location.state?.from || '/admin-panel';
       navigate(from, { replace: true });
     }
-  }, [navigate, location]); 
+  }, [navigate, location]);
 
   const handleChange = (e) => {  //show values in input fields
     setCredentials({
@@ -84,11 +84,10 @@ function AdminLogin() {
 
         {feedback && (
           <div
-            className={`page-alert ${
-              feedback.type === 'success'
+            className={`page-alert ${feedback.type === 'success'
                 ? 'page-alert-success'
                 : 'page-alert-error'
-            }`}
+              }`}
           >
             <span className="page-alert-emoji">
               {feedback.type === 'success' ? '✅' : '❌'}

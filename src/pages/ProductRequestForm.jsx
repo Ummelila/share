@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Package, ArrowLeft, CheckCircle, AlertCircle, Info, Sparkles, Shield, Clock, FileText, Tag } from "lucide-react";
+import { Package, ArrowLeft, CheckCircle, AlertCircle, FileText, Tag, MapPin } from "lucide-react";
 import AuthenticatedNavbar from "../components/AuthenticatedNavbar";
 import { supabase } from "../supabaseClient";
 
@@ -54,7 +54,6 @@ function ProductRequestForm() {
         return;
       }
 
-      // Check if this product has already been requested by any user (not rejected)
       const { data: activeRequests, error: activeError } = await supabase
         .from("product_requests")
         .select("id, status")
@@ -85,7 +84,6 @@ function ProductRequestForm() {
         }
       }
     } catch (error) {
-      console.error("Error loading product:", error);
       setFeedback({ type: "error", message: "Error loading product: " + error.message });
     } finally {
       setLoading(false);
@@ -126,7 +124,7 @@ function ProductRequestForm() {
 
     const userData = JSON.parse(user);
     if (!userData.is_verified) {
-      setFeedback({ type: "error", message: "Your account must be verified to request products. Please complete verification first." });
+      setFeedback({ type: "error", message: "Your account must be verified to request products." });
       return;
     }
 
@@ -158,7 +156,6 @@ function ProductRequestForm() {
         return;
       }
 
-      // Insert product request with fallback for missing address column
       let { error } = await supabase.from("product_requests").insert([
         {
           user_id: userData.id,
@@ -172,11 +169,8 @@ function ProductRequestForm() {
         },
       ]);
 
-      // Fallback: If address column doesn't exist in Supabase yet, append to reason
       if (error && (error.message.includes("address") || error.code === "PGRST116" || error.code === "42703")) {
-        console.warn("Retrying with fallback: Address column missing in database.");
         const fallbackReason = `${productRequestReason.trim()}\n\n[DELIVERY ADDRESS]\n${address.trim()}`;
-        
         const retry = await supabase.from("product_requests").insert([
           {
             user_id: userData.id,
@@ -194,12 +188,8 @@ function ProductRequestForm() {
       if (error) throw error;
 
       setFeedback({ type: "success", message: "Product request submitted successfully! Admin will review it soon." });
-
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000);
+      setTimeout(() => { navigate("/dashboard"); }, 2000);
     } catch (error) {
-      console.error("Error submitting product request:", error);
       setFeedback({ type: "error", message: "Error submitting request: " + error.message });
     } finally {
       setLoading(false);
@@ -208,12 +198,12 @@ function ProductRequestForm() {
 
   if (loading && !productData) {
     return (
-      <div className="min-h-screen bg-gray-50 animate-fade-in">
+      <div className="h-screen bg-white flex flex-col font-poppins overflow-hidden">
         <AuthenticatedNavbar />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading product...</p>
+        <div className="flex-1 flex items-center justify-center bg-slate-50">
+          <div className="text-center animate-pulse">
+            <div className="w-16 h-16 border-4 border-slate-200 border-t-[#124074] rounded-full animate-spin mx-auto mb-6"></div>
+            <p className="text-slate-400 font-black uppercase tracking-widest text-sm">Synchronizing Product...</p>
           </div>
         </div>
       </div>
@@ -222,20 +212,19 @@ function ProductRequestForm() {
 
   if (!productData) {
     return (
-      <div className="min-h-screen bg-gray-50 animate-fade-in">
+      <div className="h-screen bg-white flex flex-col font-poppins overflow-hidden">
         <AuthenticatedNavbar />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center max-w-md mx-auto px-4">
-            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <AlertCircle className="w-10 h-10 text-red-600" />
+        <div className="flex-1 flex items-center justify-center bg-slate-50">
+          <div className="max-w-md w-full p-12 bg-white rounded-[3rem] shadow-2xl shadow-slate-200 text-center animate-slide-up">
+            <div className="w-24 h-24 bg-red-50 rounded-[2rem] flex items-center justify-center mx-auto mb-8">
+              <AlertCircle className="w-12 h-12 text-red-500" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 font-poppins">Product Not Found</h2>
-            <p className="text-gray-600 mb-6">Product not found or not available for request. Please browse available products.</p>
+            <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">Unavailable</h2>
+            <p className="text-slate-500 font-medium mb-10 leading-relaxed">{feedback?.message || "Product not found or not available for request."}</p>
             <button
               onClick={() => navigate("/browse")}
-              className="btn-primary inline-flex items-center gap-2"
+              className="w-full bg-[#124074] text-white rounded-2xl py-6 text-lg font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 hover:scale-[1.02] transition-all"
             >
-              <Package className="w-5 h-5" />
               Browse Products
             </button>
           </div>
@@ -245,182 +234,168 @@ function ProductRequestForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 animate-fade-in">
+    <div className="h-screen bg-white text-slate-900 flex flex-col font-poppins overflow-hidden">
       <AuthenticatedNavbar />
 
-      {/* Hero Section */}
-      <section className="py-6 bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-start">
-            <button
-              type="button"
-              onClick={() => navigate("/browse")}
-              className="w-10 h-10 border-2 border-gray-300 rounded-lg flex items-center justify-center hover:border-primary-500 hover:bg-primary-50 transition-all flex-shrink-0"
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
-            </button>
-
-            <div className="text-center max-w-3xl mx-auto flex-1">
-              <h1 className="text-3xl md:text-4xl font-bold font-poppins text-gray-900 mb-2">
-                Request Product
-              </h1>
-              <p className="text-sm text-gray-600">
-                Request this product by providing your reason. Be specific about why you need it.
-              </p>
-            </div>
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Left Panel: Product Detail Sidebar */}
+        <aside className="w-[480px] bg-slate-50 border-r border-slate-200 p-16 flex flex-col overflow-y-auto animate-fade-in shrink-0">
+          <div className="mb-14">
+            <h2 className="text-4xl font-black tracking-tighter text-slate-900 leading-none">Product <span className="text-slate-300">Details</span></h2>
           </div>
-        </div>
-      </section>
 
-      {/* Form Section */}
-      <section className="py-8 -mt-4">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Product Info Card */}
-            <div className="card">
-              <h3 className="text-xl font-bold font-poppins text-gray-900 mb-4 flex items-center gap-2">
-                <Package className="w-5 h-5 text-primary-600" />
-                Product Details
-              </h3>
-              {productImageUrl && (
-                <div className="mb-4 rounded-xl overflow-hidden border-2 border-gray-200">
+          <div className="space-y-12">
+            {productImageUrl && (
+              <div className="relative group">
+                <div className="absolute inset-0 bg-[#124074] rounded-[2.5rem] blur-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                <div className="relative aspect-square rounded-[2.5rem] overflow-hidden border-4 border-white shadow-xl">
                   <img
                     src={productImageUrl}
-                    alt={productData.product_name || "Product"}
-                    className="w-full h-48 object-cover"
+                    alt={productData.product_name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 </div>
-              )}
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <FileText className="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-gray-500">Product Name</p>
-                    <p className="font-semibold text-gray-900">{productData.product_name || "Unnamed Product"}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Tag className="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-gray-500">Category</p>
-                    <p className="font-semibold text-gray-900">{productData.category}</p>
-                  </div>
-                </div>
-                {productData.description && (
-                  <div className="flex items-start gap-3">
-                    <Info className="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-gray-500">Description</p>
-                      <p className="text-gray-700 text-sm leading-relaxed">{productData.description}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Request Form Card */}
-            <div className="card">
-            {feedback && (
-              <div
-                className={`mb-6 p-4 rounded-lg border flex items-start gap-3 ${feedback.type === "success"
-                    ? "bg-green-50 border-green-200 text-green-800"
-                    : feedback.type === "warning"
-                      ? "bg-yellow-50 border-yellow-200 text-yellow-800"
-                      : "bg-red-50 border-red-200 text-red-800"
-                  }`}
-              >
-                {feedback.type === "success" ? (
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                ) : feedback.type === "warning" ? (
-                  <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                )}
-                <span className="font-medium">{feedback.message}</span>
               </div>
             )}
 
-              <form onSubmit={step === 1 ? handleNextStep : handleProductRequestSubmit} className="space-y-6">
-                {step === 1 ? (
-                  <div className="space-y-6 animate-slide-in">
-                    <div>
-                      <label className="label">
-                        Reason for Request <span className="text-red-500">*</span>
-                      </label>
-                      <textarea
-                        name="productRequestReason"
-                        placeholder="Please explain why you need this product..."
-                        value={productRequestReason}
-                        onChange={(e) => setProductRequestReason(e.target.value)}
-                        rows="8"
-                        required
-                        className="input-field w-full resize-none"
-                      />
-                    </div>
+            <div className="space-y-8">
+              <div className="flex items-start gap-5">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 shrink-0">
+                  <FileText className="w-6 h-6 text-[#124074]" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Item Name</p>
+                  <p className="text-xl font-black text-slate-900 leading-tight">{productData.product_name || "Unnamed Product"}</p>
+                </div>
+              </div>
 
+              <div className="flex items-start gap-5">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 shrink-0">
+                  <Tag className="w-6 h-6 text-[#124074]" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Category</p>
+                  <p className="text-xl font-black text-slate-900 leading-tight">{productData.category}</p>
+                </div>
+              </div>
+
+              {productData.description && (
+                <div className="bg-white/50 rounded-3xl p-8 border border-slate-100">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4">Description</p>
+                  <p className="text-slate-600 font-medium leading-relaxed italic">"{productData.description}"</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </aside>
+
+        {/* Right Panel: Form Area */}
+        <main className="flex-1 relative flex flex-col pt-4 lg:pt-6 pb-8 lg:pb-12 px-8 lg:px-12 overflow-hidden bg-slate-50/30">
+          <div className="max-w-2xl w-full mx-auto animate-slide-up">
+            <button
+              onClick={() => step === 1 ? navigate("/browse") : setStep(1)}
+              className="flex items-center gap-2 text-slate-500 hover:text-[#124074] font-bold uppercase tracking-widest text-xs mt-4 mb-6 transition-colors group"
+            >
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span>Back</span>
+            </button>
+
+            <h1 className="text-4xl md:text-5xl font-medium mb-6 tracking-tighter leading-[1.1] text-[#124074]">
+              Submit <br/>
+              <span className="text-[#124074] font-black">Request</span>
+            </h1>
+
+            {feedback && (
+              <div className={`mb-6 p-4 rounded-[1.5rem] border flex items-start gap-3 animate-fade-in ${
+                feedback.type === "success" ? "bg-green-50 border-green-100 text-green-800" :
+                feedback.type === "warning" ? "bg-yellow-50 border-yellow-100 text-yellow-800" :
+                "bg-red-50 border-red-100 text-red-800"
+              }`}>
+                <AlertCircle className="w-5 h-5 shrink-0 mt-1" />
+                <span className="font-bold text-base">{feedback.message}</span>
+              </div>
+            )}
+
+            <form onSubmit={step === 1 ? handleNextStep : handleProductRequestSubmit} className="space-y-6 pb-6">
+              {step === 1 ? (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Reason for Request</label>
+                    <textarea
+                      name="productRequestReason"
+                      placeholder="Why do you need this product?..."
+                      value={productRequestReason}
+                      onChange={(e) => setProductRequestReason(e.target.value)}
+                      rows="4"
+                      required
+                      className="w-full bg-white border border-slate-200 rounded-[1.5rem] py-5 px-8 text-lg font-light focus:border-[#124074] transition-all outline-none placeholder:text-slate-200 resize-none"
+                    />
+                  </div>
+
+                  <div className="flex justify-center pt-0">
                     <button
                       type="submit"
-                      className="btn-primary w-full flex items-center justify-center gap-2"
+                      className="w-max bg-[#124074] text-white rounded-[1.5rem] py-3.5 px-10 text-base font-black uppercase tracking-widest shadow-2xl shadow-blue-900/20 hover:scale-[1.02] hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-3"
                     >
                       <span>Next Step</span>
-                      <ArrowLeft className="w-5 h-5 rotate-180" />
                     </button>
                   </div>
-                ) : (
-                  <div className="space-y-6 animate-slide-in">
-                    <div>
-                      <label className="label">
-                        Delivery Address <span className="text-red-500">*</span>
-                      </label>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2 animate-fade-in">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Delivery Address</label>
+                    <div className="relative group">
+                      <MapPin className="absolute left-6 top-6 w-5 h-5 text-slate-300 group-focus-within:text-[#124074] transition-colors" />
                       <textarea
                         name="address"
-                        placeholder="Enter your full address for delivery..."
+                        placeholder="Enter your full address..."
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        rows="8"
+                        rows="4"
                         required
-                        className="input-field w-full resize-none"
+                        className="w-full bg-white border border-slate-200 rounded-[1.5rem] py-5 pl-14 pr-6 text-lg font-light focus:border-[#124074] transition-all outline-none placeholder:text-slate-200 resize-none"
                       />
                     </div>
-
-                    <div className="flex gap-4">
-                      <button
-                        type="button"
-                        onClick={() => setStep(1)}
-                        className="btn-secondary flex-1 flex items-center justify-center gap-2"
-                      >
-                        <ArrowLeft className="w-5 h-5" />
-                        <span>Back</span>
-                      </button>
-                      <button
-                        type="submit"
-                        className={`btn-primary flex-[2] flex items-center justify-center gap-2 ${loading ? 'btn-loading' : ''}`}
-                        disabled={loading}
-                      >
-                        {loading ? 'Submitting...' : (
-                          <>
-                            <CheckCircle className="w-5 h-5" />
-                            <span>Submit Request</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
                   </div>
-                )}
-              </form>
 
-            <button
-              type="button"
-              onClick={() => navigate("/browse")}
-              className="btn-secondary w-full mt-4 flex items-center justify-center gap-2"
-            >
-              <Package className="w-5 h-5" />
-              <span>Browse More Products</span>
-            </button>
+                  <div className="flex flex-col items-center gap-4 pt-4">
+                    <button
+                      type="submit"
+                      className={`w-max bg-[#124074] text-white rounded-[1.5rem] py-3.5 px-10 text-base font-black uppercase tracking-widest shadow-2xl shadow-blue-900/20 hover:scale-[1.02] hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-3 ${loading ? 'opacity-70 pointer-events-none' : ''}`}
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <span className="animate-pulse text-base">Submitting...</span>
+                      ) : (
+                        <span>Submit Request</span>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="text-slate-400 hover:text-slate-600 text-[10px] font-black uppercase tracking-[0.2em] transition-colors"
+                    >
+                      Back to details
+                    </button>
+                  </div>
+                </>
+              )}
+            </form>
+
+            <div className="flex justify-center mt-2">
+              <button
+                type="button"
+                onClick={() => navigate("/browse")}
+                className="w-max border border-slate-200 text-slate-400 rounded-[1.5rem] py-3 px-8 text-[10px] font-black uppercase tracking-widest hover:border-[#124074] hover:text-[#124074] transition-all flex items-center justify-center gap-2"
+              >
+                <Package className="w-4 h-4" />
+                <span>Browse More</span>
+              </button>
+            </div>
           </div>
-        </div>
-        </div>
-      </section>
+        </main>
+      </div>
     </div>
   );
 }

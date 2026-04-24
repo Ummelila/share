@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Heart, LogIn, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, HeartHandshake, LogIn, ArrowLeft } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 
 function Login() {
@@ -10,36 +10,20 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // Redirect if already logged in
-  useEffect(() => {
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser) {
-      const searchParams = new URLSearchParams(location.search);
-      const returnUrl = searchParams.get('returnUrl') || '/dashboard';
-      try {
-        const decodedUrl = decodeURIComponent(returnUrl);
-        navigate(decodedUrl, { replace: true });
-      } catch (e) {
-        navigate(returnUrl, { replace: true });
-      }
-    }
-  }, [navigate, location]);
 
   // Get return URL and additional params from query params
   const searchParams = new URLSearchParams(location.search);
   let returnUrl = searchParams.get('returnUrl') || '/dashboard';
   const productId = searchParams.get('productId');
   const openBid = searchParams.get('openBid');
-  
+
   try {
     returnUrl = decodeURIComponent(returnUrl);
   } catch (e) {
     // If decoding fails, use original
   }
-  
+
   let finalReturnUrl = returnUrl;
   if (productId) {
     if (returnUrl === '/bidding' && openBid) {
@@ -51,10 +35,22 @@ function Login() {
     }
   }
 
+  // Redirect if already logged in
+  useEffect(() => {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      try {
+        navigate(finalReturnUrl, { replace: true });
+      } catch (e) {
+        navigate(returnUrl, { replace: true });
+      }
+    }
+  }, [navigate, finalReturnUrl, returnUrl]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -70,7 +66,8 @@ function Login() {
         navigate('/admin');
       } else {
         localStorage.setItem('currentUser', JSON.stringify(data));
-        // If user came from bidding-gallery with productId, redirect to bidding-gallery with params
+
+        // Handle complex redirects
         if (returnUrl === '/bidding-gallery' && productId && openBid) {
           navigate(`/bidding-gallery?productId=${productId}&openBid=true`);
         } else if (returnUrl === '/bidding' && productId && openBid) {
@@ -92,131 +89,114 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex animate-fade-in">
-      {/* Left Side - Image/Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-600 to-secondary-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
+    <div className="h-screen w-full flex overflow-hidden animate-fade-in bg-white">
+      {/* Left Side - Seamless Branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#124074] relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#124074] to-[#0a2544]"></div>
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-500 opacity-10 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-emerald-500 opacity-10 rounded-full blur-[120px]"></div>
 
-        <div className="relative z-10 flex flex-col justify-center items-center text-center p-12 w-full">
-          <div className="mb-8">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Heart className="w-10 h-10 text-white" fill="white" />
-            </div>
-            <h1 className="text-4xl font-bold text-white font-poppins mb-4">Welcome Back!</h1>
-            <p className="text-white/80 text-lg max-w-md">Continue making a difference. Your generosity transforms lives.</p>
-          </div>
-
-          <div className="mt-auto">
-            <div className="flex items-center gap-8 text-white/80">
-              <div><p className="text-3xl font-bold text-white">5K+</p><p className="text-sm">Lives Helped</p></div>
-              <div className="w-px h-12 bg-white/30"></div>
-              <div><p className="text-3xl font-bold text-white">Rs.2.5M</p><p className="text-sm">Donated</p></div>
+        <div className="relative z-10 flex flex-col justify-center items-center text-center p-12 w-full h-full">
+          <div className="mb-10">
+            <div className="flex flex-col items-center justify-center gap-6 mb-4">
+              <img src="/logo.png" alt="Share4Good Logo" className="w-32 h-32 object-contain" />
+              <h1 className="text-5xl font-bold text-white font-roboto tracking-tight">Share<span className="text-blue-400">4</span>Good</h1>
             </div>
           </div>
+          <p className="text-white/70 text-xl max-w-md font-medium leading-relaxed">Welcome back! Together, we continue to transform lives.</p>
         </div>
+
+        {/* Removed branding subtext */}
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
-        <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center">
-                <Heart className="w-7 h-7 text-white" fill="white" />
-              </div>
-              <span className="text-2xl font-bold font-poppins text-gray-800">Share<span className="text-primary-500">4</span>Good</span>
-            </Link>
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white relative">
+        <div className="absolute top-8 left-8">
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="w-12 h-12 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center hover:bg-gray-100 transition-all shadow-sm active:scale-95"
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+        </div>
+
+        <div className="w-full max-w-lg">
+          <div className="text-left mb-10">
+            <h2 className="text-5xl font-bold text-gray-900 font-roboto tracking-tight">Welcome Back</h2>
+            <p className="text-gray-600 mt-3 text-xl font-medium">Continue your journey of giving</p>
           </div>
 
-          <div className="card">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 font-poppins">Sign In</h2>
-              <p className="text-gray-500 mt-2">Enter your credentials to access your account</p>
+          {error && (
+            <div className="mb-6 p-4 bg-red-50/80 border-l-4 border-red-500 text-red-600 rounded-lg text-sm font-bold flex items-center gap-3">
+              <span className="flex-shrink-0 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-8" autoComplete="off">
+            <div>
+              <label className="text-lg font-bold text-black tracking-wide ml-1">Email Address</label>
+              <div className="relative mt-2">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-16 px-6 bg-gray-50 border-gray-100 rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#124074] focus:border-transparent transition-all outline-none text-gray-900 font-normal text-lg placeholder:text-base placeholder:font-light"
+                  placeholder="you@example.com"
+                  readOnly
+                  onFocus={(e) => e.target.removeAttribute('readonly')}
+                  autoComplete="off"
+                  name={`email_${Date.now()}`}
+                  required
+                />
+              </div>
             </div>
 
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-xl text-sm">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="label">Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input 
-                    type="email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    className="input-field pl-12" 
-                    placeholder="you@example.com" 
-                    required 
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="label">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input 
-                    type={showPassword ? 'text' : 'password'} 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    className="input-field pl-12 pr-12" 
-                    placeholder="••••••••" 
-                    required 
-                  />
-                  <button 
-                    type="button" 
-                    onClick={() => setShowPassword(!showPassword)} 
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    checked={remember} 
-                    onChange={(e) => setRemember(e.target.checked)} 
-                    className="w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500" 
-                  />
-                  <span className="text-sm text-gray-600">Remember me</span>
-                </label>
-                <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
-                  Forgot Password?
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="text-lg font-bold text-black tracking-wide ml-1">Password</label>
+                <Link to="/forgot-password" virtual="true" className="text-xs font-black text-[#124074] hover:underline">
+                  FORGOT PASSWORD?
                 </Link>
               </div>
-
-              <button 
-                type="submit" 
-                className={`btn-primary w-full flex items-center justify-center gap-2 ${loading ? 'btn-loading' : ''}`}
-                disabled={loading}
-              >
-                {!loading && <LogIn className="w-5 h-5" />} {loading ? 'Signing In...' : 'Sign In'}
-              </button>
-            </form>
-
-            <div className="mt-8 text-center">
-              <p className="text-gray-600">Don't have an account? <Link to="/signup" className="text-primary-600 hover:text-primary-700 font-semibold">Sign Up</Link></p>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full h-16 px-6 pr-12 bg-gray-50 border-gray-100 rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#124074] focus:border-transparent transition-all outline-none text-gray-900 font-normal text-lg placeholder:text-base placeholder:font-light"
+                  placeholder="••••••••"
+                  readOnly
+                  onFocus={(e) => e.target.removeAttribute('readonly')}
+                  autoComplete="new-password"
+                  name={`password_${Date.now()}`}
+                  data-lpignore="true"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="text-center mt-6">
+
+
             <button
-              type="button"
-              onClick={() => navigate("/")}
-              className="w-10 h-10 border-2 border-gray-300 rounded-lg flex items-center justify-center hover:border-primary-500 hover:bg-primary-50 transition-all"
+              type="submit"
+              disabled={loading}
+              className={`w-40 h-14 bg-[#124074] text-white rounded-2xl flex items-center justify-center active:scale-[0.98] transition-all shadow-xl shadow-blue-900/20 font-semibold text-lg ${loading ? 'opacity-70' : 'hover:bg-[#103866]'}`}
             >
-              <ArrowLeft className="w-5 h-5 text-gray-600 group-hover:text-primary-600" />
+              <span>{loading ? 'Sign In...' : 'Sign In'}</span>
             </button>
+          </form>
+
+          <div className="mt-10 text-center">
+            <p className="text-gray-500 font-semibold text-lg">Don't have an account? <Link to="/signup" className="text-[#124074] hover:underline font-black">Sign Up</Link></p>
           </div>
         </div>
       </div>

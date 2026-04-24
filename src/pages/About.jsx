@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import {
-    Heart,
+    HandHeart,
     Target,
     Eye,
     Users,
@@ -17,7 +17,7 @@ const About = () => {
     const navigate = useNavigate();
     const values = [
         {
-            icon: Heart,
+            icon: HandHeart,
             title: 'Compassion',
             description: 'Every action we take is driven by genuine care for those in need.',
         },
@@ -90,7 +90,7 @@ const About = () => {
                         
                         <div className="text-center max-w-3xl mx-auto flex-1">
                             <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-700 px-4 py-1.5 rounded-full text-xs font-semibold mb-3 shadow-sm">
-                                <Heart className="w-3 h-3" fill="currentColor" />
+                                <HandHeart className="w-3 h-3" />
                                 <span>Our Story</span>
                             </div>
                             <h1 className="text-3xl md:text-4xl font-bold font-poppins text-gray-900 mb-2">
